@@ -23,3 +23,17 @@ function App() {
 }
 
 export default App;
+
+// import React from 'react';
+// import P5Component from './p5component';
+
+// function App() {
+//   return (
+//     <div className="App">
+//       <h1>React with Local p5.js</h1>
+//       <P5Component />
+//     </div>
+//   );
+// }
+
+// export default App;
