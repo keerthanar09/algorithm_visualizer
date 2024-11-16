@@ -5,15 +5,15 @@ import p5 from "p5";
 import axios from "axios";
 
 const BubbleSortVisualization = () => {
-  const [values, setValues] = useState([]);  // React state to hold the data
+  const [values, setValues] = useState([]); 
   const sketchRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/get_sorting_data/"); // Adjust the API URL if needed
+        const response = await axios.get("http://127.0.0.1:8000/api/get_sorting_data/"); 
         if (Array.isArray(response.data)) { 
-          setValues(response.data);  // Update state only if data is valid
+          setValues(response.data); 
         } else {
           console.error("Invalid data format from API");
         }
@@ -25,10 +25,9 @@ const BubbleSortVisualization = () => {
     fetchData();
   }, []);
 
-
+//Prevents running p5 skectch if the data from the backend is not ready
   useEffect(() => {
     if (values.length === 0) {
-      // Prevent running the p5 sketch until values are ready
       return;
     }
     const sketch = (p) => {
