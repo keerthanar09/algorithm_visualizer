@@ -24,15 +24,19 @@
 
 // export default App;
 
-import BubbleSortVisualization from "./components/bubblesort";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import BubbleSortVisualization from './components/bubblesort';
+import MergeSortVisualization from './components/merge';
 
 function App() {
   return (
-    <div className="App">
-      <h1>Algorithm Visualizer</h1>
-      <BubbleSortVisualization />
-    </div>
+    <Router>
+      <Routes>
+          <Route path="/bubble" element={<BubbleSortVisualization />} />
+          <Route path="/merge" element={<MergeSortVisualization />} />
+      </Routes>
+    </Router>
   );
 }
-
 export default App;
