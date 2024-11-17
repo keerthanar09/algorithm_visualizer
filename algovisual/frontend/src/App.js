@@ -28,15 +28,22 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import BubbleSortVisualization from './components/bubblesort';
 import MergeSortVisualization from './components/merge';
+import QuickSortVisualization from './components/quick';
+import SelectionSortVisualization from './components/selection';
 
 function App() {
   return (
+    <div>
+      <h1>Algorithm Visualizer</h1>
     <Router>
       <Routes>
           <Route path="/bubble" element={<BubbleSortVisualization />} />
           <Route path="/merge" element={<MergeSortVisualization />} />
+          <Route path="/quick" element={<QuickSortVisualization />} />
+          <Route path="/select" element={<SelectionSortVisualization />} />
       </Routes>
     </Router>
+    </div>
   );
 }
 export default App;
