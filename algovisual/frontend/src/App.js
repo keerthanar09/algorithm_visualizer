@@ -37,6 +37,8 @@ function App() {
       <h1>Algorithm Visualizer</h1>
     <Router>
       <Routes>
+        import navbar from './components/navbar';
+        import size.jsm from './components/size.jsm';
           <Route path="/bubble" element={<BubbleSortVisualization />} />
           <Route path="/merge" element={<MergeSortVisualization />} />
           <Route path="/quick" element={<QuickSortVisualization />} />
