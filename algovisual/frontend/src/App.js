@@ -30,6 +30,8 @@ import BubbleSortVisualization from './components/bubblesort';
 import MergeSortVisualization from './components/merge';
 import QuickSortVisualization from './components/quick';
 import SelectionSortVisualization from './components/selection';
+import Navbar from './components/navbar';
+import Size from './components/size.js';
 
 function App() {
   return (
@@ -37,8 +39,7 @@ function App() {
       <h1>Algorithm Visualizer</h1>
     <Router>
       <Routes>
-        import navbar from './components/navbar';
-        import size.jsm from './components/size.jsm';
+          <Route path="/" element={<Navbar />} />          
           <Route path="/bubble" element={<BubbleSortVisualization />} />
           <Route path="/merge" element={<MergeSortVisualization />} />
           <Route path="/quick" element={<QuickSortVisualization />} />
