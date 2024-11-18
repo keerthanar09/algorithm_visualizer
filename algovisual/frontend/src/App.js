@@ -31,7 +31,7 @@ import MergeSortVisualization from './components/merge';
 import QuickSortVisualization from './components/quick';
 import SelectionSortVisualization from './components/selection';
 import Navbar from './components/navbar';
-import Size from './components/size.js';
+import Size from './components/size';
 
 function App() {
   return (
