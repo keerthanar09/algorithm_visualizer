@@ -1,49 +1,26 @@
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
 
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import BubbleSortVisualization from './components/bubblesort';
-import MergeSortVisualization from './components/merge';
-import QuickSortVisualization from './components/quick';
-import SelectionSortVisualization from './components/selection';
 import Navbar from './components/navbar';
+import BubbleVizPage from './pages/BubbleViz';
+import MergeVizPage from './pages/MergeSortViz';
+import QuickVizPage from './pages/QuickSortViz';
+import SelVizPage from './pages/SelSort';
+import AlgorithmList from './pages/AlgList';
 
 
 function App() {
   return (
     <div>
-      <h1>Algorithm Visualizer</h1>
     <Router>
       <Routes>
           <Route path="/" element={<Navbar />} />          
-          <Route path="/bubble" element={<BubbleSortVisualization />} />
-          <Route path="/merge" element={<MergeSortVisualization />} />
-          <Route path="/quick" element={<QuickSortVisualization />} />
-          <Route path="/select" element={<SelectionSortVisualization />} />
+          <Route path="/Sortinglist" element={<AlgorithmList/>} />
+          <Route path="/bubble" element={<BubbleVizPage />} />
+          <Route path="/merge" element={<MergeVizPage />} />
+          <Route path="/quick" element={<QuickVizPage />} />
+          <Route path="/select" element={<SelVizPage />} />
       </Routes>
     </Router>
     </div>
