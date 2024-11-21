@@ -2,12 +2,12 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/navbar';
 import BubbleVizPage from './pages/BubbleViz';
 import MergeVizPage from './pages/MergeSortViz';
 import QuickVizPage from './pages/QuickSortViz';
 import SelVizPage from './pages/SelSort';
 import AlgorithmList from './pages/AlgList';
+import NavBar from './components/UI/navbar';
 
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
     <div>
     <Router>
       <Routes>
-          <Route path="/" element={<Navbar />} />          
+          <Route path="/" element={<NavBar/>} />
           <Route path="/Sortinglist" element={<AlgorithmList/>} />
           <Route path="/bubble" element={<BubbleVizPage />} />
           <Route path="/merge" element={<MergeVizPage />} />
