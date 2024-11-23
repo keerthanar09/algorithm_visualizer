@@ -16,6 +16,9 @@ function App() {
     <Router>
       <Routes>
           <Route path="/" element={<NavBar/>} />
+          <Route path="/" element={<Carousal/>}/>
+          <Route path="/" element={<Search/>}/>
+          <Route path="/" element={<Autoplayoption/>}/>
           <Route path="/Sortinglist" element={<AlgorithmList/>} />
           <Route path="/bubble" element={<BubbleVizPage />} />
           <Route path="/merge" element={<MergeVizPage />} />
