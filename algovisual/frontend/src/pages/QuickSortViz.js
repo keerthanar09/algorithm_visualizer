@@ -1,9 +1,11 @@
 import QuickSortVisualization from "../components/quick";
+import NavBar from "../components/UI/navbar";
 
 function QuickVizPage() {
     return(
         <div>
-            <h1>Quick Sort Visualization</h1>
+            <NavBar />
+            <h1><center>Quick Sort Visualization</center></h1>
             <center><QuickSortVisualization /></center>
         </div>
     )

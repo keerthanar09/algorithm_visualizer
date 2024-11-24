@@ -1,9 +1,11 @@
 import MergeSortVisualization from "../components/merge";
+import NavBar from "../components/UI/navbar";
 
 function MergeVizPage() {
     return(
         <div>
-            <h1>Merge Sort Visualization</h1>
+            <NavBar />
+            <h1><center>Merge Sort Visualization</center></h1>
             <center><MergeSortVisualization /></center>
         </div>
     )

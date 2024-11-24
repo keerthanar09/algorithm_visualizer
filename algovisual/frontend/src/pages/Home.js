@@ -1,8 +1,11 @@
+import NavBar from "../components/UI/navbar";
+import Carousal2 from "../components/UI/carousal2";
+
 function Home() {
     return (
         <div>
-            <h1>Algorithm Visualizer</h1>
-            
+            <NavBar />
+            <Carousal2 />
         </div>
     )
 }
