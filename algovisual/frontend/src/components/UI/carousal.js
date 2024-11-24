@@ -1,18 +1,18 @@
-function carousal(){
+function Carousal(){
   return(
     <div>
       <div id="carouselExampleFade" class="carousel slide carousel-fade">
   <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="..." class="d-block w-100" alt="...">
+    <div class="carousel-item active"active>
+      <img src="/images/download.jpg" class="d-block w-100" alt="sorting">
       </img>
     </div>
     <div class="carousel-item">
-      <img src="..." class="d-block w-100" alt="...">
+      <img src="/images/images.jpg" class="d-block w-100" alt="pathfinding">
       </img>
     </div>
     <div class="carousel-item">
-      <img src="..." class="d-block w-100" alt="...">
+      <img src="/images/Understanding-Binary-Search-Algorithm.png" class="d-block w-100" alt="search">
       </img>
     </div>
   </div>
@@ -28,3 +28,5 @@ function carousal(){
     </div>
   )
 }
+
+export default Carousal;

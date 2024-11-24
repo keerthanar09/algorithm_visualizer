@@ -1,4 +1,4 @@
-function search(){
+function DropDown(){
     return(
         <div>
             <div class="dropdown">
@@ -14,3 +14,5 @@ function search(){
         </div>
     )
 }
+
+export default DropDown;

@@ -8,6 +8,8 @@ import QuickVizPage from './pages/QuickSortViz';
 import SelVizPage from './pages/SelSort';
 import AlgorithmList from './pages/AlgList';
 import NavBar from './components/UI/navbar';
+import DropDown from './components/UI/dropdown';
+import Carousal from './components/UI/carousal';
 
 
 function App() {
@@ -15,10 +17,7 @@ function App() {
     <div>
     <Router>
       <Routes>
-          <Route path="/" element={<NavBar/>} />
-          <Route path="/" element={<Carousal/>}/>
-          <Route path="/" element={<Search/>}/>
-          <Route path="/" element={<Autoplayoption/>}/>
+          <Route path="/" element={<Carousal/>} />
           <Route path="/Sortinglist" element={<AlgorithmList/>} />
           <Route path="/bubble" element={<BubbleVizPage />} />
           <Route path="/merge" element={<MergeVizPage />} />
