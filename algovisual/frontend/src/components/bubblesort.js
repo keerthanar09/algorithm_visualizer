@@ -3,15 +3,20 @@
 import React, {useRef, useEffect, useState} from "react";
 import p5 from "p5";
 import axios from "axios";
+import PlayPauseButton from "./UI/pauseplay";
+import GenerateArrayButton from "./UI/genarr";
+import NumberInput from "./UI/inputbox";
 
 const BubbleSortVisualization = () => {
   const [values, setValues] = useState([]); 
+  const [numElements, setNumElements] = useState(10); 
+  const [isPlaying, setIsPlaying] = useState(true);
   const sketchRef = useRef();
-
-  useEffect(() => {
+  const p5InstanceRef = useRef(null);
+ 
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/get_sorting_data/"); 
+        const response = await axios.get(`http://127.0.0.1:8000/api/get_sorting_data/?num_elements=${numElements}`); 
         if (Array.isArray(response.data)) { 
           setValues(response.data); 
         } else {
@@ -21,9 +26,10 @@ const BubbleSortVisualization = () => {
         console.error("Error fetching data:", error);
       }
     };
-
-    fetchData();
-  }, []);
+    
+    useEffect(() => {
+      fetchData();
+    }, [numElements]);
 
 //Prevents running p5 skectch if the data from the backend is not ready
   useEffect(() => {
@@ -80,13 +86,34 @@ const BubbleSortVisualization = () => {
       };
     
     };
-    const p5Instance = new p5(sketch, sketchRef.current);
+    p5InstanceRef.current = new p5(sketch, sketchRef.current);
 
     return () => {
-      p5Instance.remove();
+      p5InstanceRef.current.remove();
     };
-    }, [values]);
-    return <div ref = {sketchRef}></div>
+  }, [values]);
+
+  // This function is to implement the pause and play functionality
+  const togglePlayPause = () => {
+    setIsPlaying((prev) => {
+      if (prev) {
+        p5InstanceRef.current.noLoop(); // The loop is stopped and visualization is paused
+      } else {
+        p5InstanceRef.current.loop(); //When play is pressed, the loop is continued from where it was stopped.
+      }
+      return !prev;
+    });
+  };
+
+
+  return (
+    <div>
+      <NumberInput numElements={numElements} setNumElements={setNumElements} />
+      <GenerateArrayButton fetchData={fetchData} />
+      <PlayPauseButton isPlaying={isPlaying} togglePlayPause={togglePlayPause} />
+      <div ref={sketchRef}></div>
+    </div>
+  );
 };
 export default BubbleSortVisualization;
   
