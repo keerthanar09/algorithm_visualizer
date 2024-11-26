@@ -64,6 +64,13 @@ const BubbleSortVisualization = () => {
             p.width / arr.length - 5,
             arr[k]
           );
+          p.fill(0); // Set text color to black
+          p.textAlign(p.CENTER, p.BOTTOM); // Align text to center horizontally and bottom vertically
+          p.text(
+            arr[k], // Text to display
+            k * (p.width / arr.length) + (p.width / arr.length) / 2, // Center the text on the bar
+            p.height - arr[k] - 5 // Position above the bar
+          );
         }
 
         if (i < arr.length) {
