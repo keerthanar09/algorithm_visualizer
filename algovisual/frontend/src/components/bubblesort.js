@@ -6,6 +6,7 @@ import axios from "axios";
 import PlayPauseButton from "./UI/pauseplay";
 import GenerateArrayButton from "./UI/genarr";
 import NumberInput from "./UI/inputbox";
+import Settings from "./UI/settings";
 
 const BubbleSortVisualization = () => {
   const [values, setValues] = useState([]); 
@@ -107,11 +108,15 @@ const BubbleSortVisualization = () => {
 
 
   return (
-    <div>
-      <NumberInput numElements={numElements} setNumElements={setNumElements} />
-      <GenerateArrayButton fetchData={fetchData} />
-      <PlayPauseButton isPlaying={isPlaying} togglePlayPause={togglePlayPause} />
-      <div ref={sketchRef}></div>
+    <div class = "container1">
+      <Settings
+  numElements={numElements}
+  setNumElements={setNumElements}
+  togglePlayPause={togglePlayPause}
+  isPlaying={isPlaying}
+  fetchData={fetchData}
+/>
+      <div class = "vis" ref={sketchRef}></div>
     </div>
   );
 };

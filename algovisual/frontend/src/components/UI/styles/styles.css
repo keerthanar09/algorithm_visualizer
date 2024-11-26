@@ -7,3 +7,45 @@
     color: white;
   }
 
+  .settings {
+    position: relative; 
+    margin-left: auto; 
+    margin-right: 0; 
+    width: 400px;
+    height: 400px;
+    padding: 20px; 
+    background-color: #e6d5f7; 
+    border: 2px solid #260149; 
+    border-radius: 10px; 
+    box-shadow: 0 0 10px 2px rgba(127, 63, 255, 0.8); 
+    text-align: center; 
+    font-family: Arial, sans-serif; 
+    color: #000000;
+    transition: transform 0.3s, box-shadow 0.3s; 
+
+  }
+  
+  .settings:hover {
+    transform: scale(1.05); 
+    box-shadow: 0 0 20px 5px rgba(138, 43, 226, 1);
+  }
+
+  .vis{
+    margin-left: 0; 
+    margin-right: auto; 
+    width: fit-content; 
+    padding: 20px;
+    background-color: #f3f3f3; 
+    border: 1px solid #ccc; 
+    text-align: left; 
+    font-family: Arial, sans-serif; 
+    color: #333; 
+  }
+
+  .container1 {
+    display: flex; 
+    justify-content: space-between;
+    align-items: center; 
+    padding: 10px; 
+  }
+  
