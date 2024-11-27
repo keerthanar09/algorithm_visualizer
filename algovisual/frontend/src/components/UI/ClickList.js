@@ -3,7 +3,7 @@ function ClickList() {
     <div class="list-group">
       <a
         href="/bubble"
-        class="list-group-item list-group-item-action active"
+        class="list-group-item list-group-item-action"
         aria-current="true"
       >
         Bubble Sort

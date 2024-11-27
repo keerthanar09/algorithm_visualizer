@@ -3,9 +3,6 @@
 import React, {useRef, useEffect, useState} from "react";
 import p5 from "p5";
 import axios from "axios";
-import PlayPauseButton from "./UI/pauseplay";
-import GenerateArrayButton from "./UI/genarr";
-import NumberInput from "./UI/inputbox";
 import Settings from "./UI/settings";
 
 const BubbleSortVisualization = () => {
@@ -42,6 +39,7 @@ const BubbleSortVisualization = () => {
       let j = 0;
       let swapped = false;
       let arr = [...values];
+
       p.setup = () => {
         p.createCanvas(400, 400);
         p.frameRate(1);
@@ -64,12 +62,13 @@ const BubbleSortVisualization = () => {
             p.width / arr.length - 5,
             arr[k]
           );
-          p.fill(0); // Set text color to black
-          p.textAlign(p.CENTER, p.BOTTOM); // Align text to center horizontally and bottom vertically
+          //Following code is to display the value of each bar above it while visualization is running.
+          p.fill(0); 
+          p.textAlign(p.CENTER, p.BOTTOM); 
           p.text(
-            arr[k], // Text to display
-            k * (p.width / arr.length) + (p.width / arr.length) / 2, // Center the text on the bar
-            p.height - arr[k] - 5 // Position above the bar
+            arr[k], 
+            k * (p.width / arr.length) + (p.width / arr.length) / 2, 
+            p.height - arr[k] - 5 
           );
         }
 
@@ -115,15 +114,15 @@ const BubbleSortVisualization = () => {
 
 
   return (
-    <div class = "container1">
+    <div class="container1">
       <Settings
-  numElements={numElements}
-  setNumElements={setNumElements}
-  togglePlayPause={togglePlayPause}
-  isPlaying={isPlaying}
-  fetchData={fetchData}
-/>
-      <div class = "vis" ref={sketchRef}></div>
+        numElements={numElements}
+        setNumElements={setNumElements}
+        togglePlayPause={togglePlayPause}
+        isPlaying={isPlaying}
+        fetchData={fetchData}
+      />
+      <div class="vis" ref={sketchRef}></div>
     </div>
   );
 };

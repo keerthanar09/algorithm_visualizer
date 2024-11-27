@@ -3,16 +3,19 @@
 import React, {useRef, useEffect, useState} from "react";
 import p5 from "p5";
 import axios from "axios";
+import Settings from "./UI/settings";
 
 const MergeSortVisualization = () => {
   const [values, setValues] = useState([]); 
+  const [numElements, setNumElements] = useState(10); 
+  const [isPlaying, setIsPlaying] = useState(true);
   const sketchRef = useRef();
+  const p5InstanceRef = useRef(null);
 
 
-  useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/get_sorting_data/"); 
+        const response = await axios.get(`http://127.0.0.1:8000/api/get_sorting_data/?num_elements=${numElements}`); 
         if (Array.isArray(response.data)) { 
           setValues(response.data); 
         } else {
@@ -22,9 +25,9 @@ const MergeSortVisualization = () => {
         console.error("Error fetching data:", error);
       }
     };
-
-    fetchData();
-  }, []);
+    useEffect(() => {
+      fetchData();
+    }, [numElements]);
 
 //Prevents running p5 skectch if the data from the backend is not ready
   useEffect(() => {
@@ -53,6 +56,14 @@ const MergeSortVisualization = () => {
         else if (states[i] === 1) p.fill(0, 255, 0); 
         p.noStroke(); 
         p.rect(i * (p.width / value.length), p.height - value[i], p.width / value.length - 4, value[i]);
+        //Following code is to display the value of each bar above it while visualization is running.
+        p.fill(0); 
+        p.textAlign(p.CENTER, p.BOTTOM); 
+        p.text(
+          value[i], 
+          i * (p.width / value.length) + (p.width / value.length) / 2, 
+          p.height - value[i] - 5 
+        );
       }
 
       if (done) p.noLoop();
@@ -107,13 +118,41 @@ const MergeSortVisualization = () => {
       return new Promise(resolve => setTimeout(resolve, ms));
     };
   };
-  const p5Instance = new p5(sketch, sketchRef.current);
+  p5InstanceRef.current = new p5(sketch, sketchRef.current);
 
-    return () => {
-      p5Instance.remove();
-    };
-    }, [values]);
-    return <div ref = {sketchRef}></div>
+  return () => {
+    p5InstanceRef.current.remove();
+  };
+}, [values]);
+
+// This function is to implement the pause and play functionality
+const togglePlayPause = () => {
+  setIsPlaying((prev) => {
+    if (prev) {
+      p5InstanceRef.current.noLoop(); // The loop is stopped and visualization is paused
+    } else {
+      p5InstanceRef.current.loop(); //When play is pressed, the loop is continued from where it was stopped.
+    }
+    return !prev;
+  });
 };
+
+
+return (
+  <div class="container1">
+    <Settings
+      numElements={numElements}
+      setNumElements={setNumElements}
+      togglePlayPause={togglePlayPause}
+      isPlaying={isPlaying}
+      fetchData={fetchData}
+    />
+    <div class="vis" ref={sketchRef}></div>
+  </div>
+);
+};
+
+
+
 export default MergeSortVisualization;
   
