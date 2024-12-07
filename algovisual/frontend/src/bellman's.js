@@ -1,116 +1,114 @@
 const canvas = document.getElementById('graphCanvas');
 const ctx = canvas.getContext('2d');
-if (!canvas) {
-  console.error("Canvas not found!");
-}
-if (!ctx) {
-  console.error("Context not found!");
-}
 
-// Graph Representation
-const nodes = [
-  { x: 100, y: 100, id: 0, edges: [{ to: 1, weight: 4 }, { to: 2, weight: 2 }] },
-  { x: 300, y: 100, id: 1, edges: [{ to: 2, weight: 5 }, { to: 3, weight: 10 }] },
-  { x: 200, y: 300, id: 2, edges: [{ to: 1, weight: 1 }, { to: 3, weight: 8 }, { to: 4, weight: 7 }] },
-  { x: 400, y: 300, id: 3, edges: [{ to: 4, weight: 3 }] },
-  { x: 600, y: 300, id: 4, edges: [] }
-];  // <-- Make sure there is a closing bracket here.
-
-let distances = [];
-let predecessors = [];
-let currentStep = 0;
-
-function initializeGraph() {
-  console.log("Initializing graph...");
-  distances = Array(nodes.length).fill(Infinity);
-  predecessors = Array(nodes.length).fill(null);
-  distances[0] = 0; // Starting node (node 0)
-}
-
-function drawGraph() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  nodes.forEach((node) => {
-    // Draw edges
-    node.edges.forEach((edge) => {
-      const from = node;
-      const to = nodes[edge.to];
-      ctx.beginPath();
-      ctx.moveTo(from.x, from.y);
-      ctx.lineTo(to.x, to.y);
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.closePath();
-
-      // Draw edge weights
-      ctx.fillStyle = '#000';
-      const midX = (from.x + to.x) / 2;
-      const midY = (from.y + to.y) / 2;
-      ctx.fillText(edge.weight.toString(), midX, midY);
-    });
-
-    // Draw nodes
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, 20, 0, Math.PI * 2, false);
-    ctx.fillStyle = 'lightblue';
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-
-    // Node IDs
-    ctx.fillStyle = '#000';
-    ctx.fillText(node.id.toString(), node.x - 5, node.y + 5);
-  });
-}
-
-function updateStep() {
-  if (currentStep < nodes.length - 1) {
-    console.log('Updating step ${currentStep}');
-    // Bellman-Ford Relaxation for one step
-    for (let i = 0; i < nodes.length; i++) {
-      nodes[i].edges.forEach((edge) => {
-        const u = i;
-        const v = edge.to;
-        const weight = edge.weight;
-        if (distances[u] + weight < distances[v]) {
-          distances[v] = distances[u] + weight;
-          predecessors[v] = u;
+let vertices = [];
+let edges = [];
+function generateRandomGraph() {
+    const vertexCount = Math.floor(Math.random() * 4) + 3; 
+    vertices = [];
+    edges = [];
+    for (let i = 0; i < vertexCount; i++) {
+        vertices.push({
+            id: i,
+            x: Math.floor(Math.random() * (canvas.width - 50)) + 25,
+            y: Math.floor(Math.random() * (canvas.height - 50)) + 25
+        });
+    }
+    for (let i = 0; i < vertexCount - 1; i++) {
+        for (let j = i + 1; j < vertexCount; j++) {
+            if (Math.random() > 0.5) { 
+                edges.push({
+                    from: i,
+                    to: j,
+                    weight: Math.floor(Math.random() * 10) + 1
+                });
+            }
         }
-      });
     }
-    currentStep++;
-  }
-  animateStep(); // <-- Ensure this line is not missing.
+
+    drawGraph();
 }
+function drawGraph() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    edges.forEach(edge => {
+        const fromVertex = vertices[edge.from];
+        const toVertex = vertices[edge.to];
 
-function animateStep() {
-  console.log("Animating step...");
-  initializeGraph();
-  drawGraph();
+        ctx.beginPath();
+        ctx.moveTo(fromVertex.x, fromVertex.y);
+        ctx.lineTo(toVertex.x, toVertex.y);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        const midX = (fromVertex.x + toVertex.x) / 2;
+        const midY = (fromVertex.y + toVertex.y) / 2;
+        ctx.fillStyle = 'red';
+        ctx.fillText(edge.weight, midX, midY);
+    });
+    vertices.forEach(vertex => {
+        ctx.beginPath();
+        ctx.arc(vertex.x, vertex.y, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = 'lightblue';
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = 'black';
+        ctx.fillText(vertex.id, vertex.x - 5, vertex.y + 5);
+    });
+}
+async function visualizeBellmanFord() {
+    const distances = Array(vertices.length).fill(Infinity);
+    distances[0] = 0;
 
-  // Highlight visited nodes and edges for the current step
-  ctx.fillStyle = 'red';
-  nodes.forEach((node, i) => {
-    if (distances[i] < Infinity) {
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, 20, 0, Math.PI * 2, false);
-      ctx.fillStyle = 'yellow';
-      ctx.fill();
-      ctx.stroke();
-      ctx.closePath();
+    for (let i = 0; i < vertices.length - 1; i++) {
+        for (const edge of edges) {
+            const { from, to, weight } = edge;
+
+            if (distances[from] + weight < distances[to]) {
+                distances[to] = distances[from] + weight;
+                highlightEdge(edge, 'blue');
+                await sleep(1000); 
+                drawGraph(); 
+            }
+        }
     }
-  });
+    let hasNegativeCycle = false;
+    for (const edge of edges) {
+        const { from, to, weight } = edge;
+        if (distances[from] + weight < distances[to]) {
+            hasNegativeCycle = true;
+            break;
+        }
+    }
 
-  // Display current distances
-  ctx.fillStyle = 'black';
-  nodes.forEach((node, i) => {
-    ctx.fillText('d[${i}] = ${distances[i]}', 10, 20 + i * 20);
-  });
+    if (hasNegativeCycle) {
+        alert('Graph contains a negative weight cycle!');
+    } else {
+        let message = 'Algorithm completed. Shortest distances:\n';
+        distances.forEach((distance, index) => {
+            message += `Vertex ${index}: Distance = ${distance}
+`;
+        });
+        alert(message);
+    }
+    vertices.forEach((vertex, index) => {
+        ctx.fillStyle = 'black';
+        ctx.fillText('D: ${distances[index]}, vertex.x - 10, vertex.y + 35');
+    });
 }
+function highlightEdge(edge, color) {
+    const fromVertex = vertices[edge.from];
+    const toVertex = vertices[edge.to];
 
-function startAlgorithm() {
-  initializeGraph();
-  drawGraph();
-  updateStep();
-  setInterval(updateStep, 1500); // <-- Ensure you call the interval function here correctly.
+    ctx.beginPath();
+    ctx.moveTo(fromVertex.x, fromVertex.y);
+    ctx.lineTo(toVertex.x, toVertex.y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.stroke();
 }
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+document.getElementById('generateGraphButton').addEventListener('click', generateRandomGraph);
+document.getElementById('startButton').addEventListener('click', visualizeBellmanFord);
+generateRandomGraph();
