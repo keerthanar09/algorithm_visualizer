@@ -2,7 +2,7 @@ function PathFindList() {
     return (
       <div class="list-group">
         <a
-          href="#"
+          href="/bellman"
           class="list-group-item list-group-item-action"
           aria-current="true"
         >

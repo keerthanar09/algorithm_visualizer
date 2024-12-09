@@ -14,6 +14,7 @@ import DropDown from './components/UI/dropdown';
 import Carousal2 from './components/UI/carousal2';
 import Home from './pages/Home';
 import PathFindingListPage from './pages/Pathfindlist';
+import BellmanVizPage from './pages/Bellman';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/quick" element={<QuickVizPage />} />
           <Route path="/select" element={<SelVizPage />} />
           <Route path="/test" element={<Carousal2 />} />
+          <Route path="/bellman" element={<BellmanVizPage/>}/>
       </Routes>
     </Router>
     </div>
