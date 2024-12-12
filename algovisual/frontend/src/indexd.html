@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijkstra Algorithm Visualizer</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        .controls {
+            margin-bottom: 10px;
+        }
+        .button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button class="button" onclick="generateGraph()">Generate Random Graph</button>
+        <button class="button" onclick="startVisualization()">Start Visualization</button>
+    </div>
+    <canvas id="graphCanvas" width="800" height="600"></canvas>
+    <script src="diji.js"></script>
+</body>
+</html>
