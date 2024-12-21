@@ -14,6 +14,7 @@ import Home from './pages/Home';
 import PathFindingListPage from './pages/Pathfindlist';
 import BellmanVizPage from './pages/Bellman';
 import DijViz from './pages/DjViz';
+import BFSVisPage from './pages/bfsviz';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/test" element={<Carousal2 />} />
           <Route path="/bellman" element={<BellmanVizPage/>}/>
           <Route path="/dj" element={<DijViz/>}/>
+          <Route path="/bfs" element={<BFSVisPage/>}/>
       </Routes>
     </Router>
     </div>

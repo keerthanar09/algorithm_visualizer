@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+}
+
+.graph-container {
+  flex: 2;
+}
+
+.queue-container {
+  flex: 1;
+  text-align: center;
+}
+
+#graphCanvas {
+  border: 1px solid #ccc;
+  display: block;
+  margin: 0 auto;
+}
+
+.queue-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  height: 200px;
+  overflow-y: auto;
+}
+
+.queue-container ul li {
+  padding: 5px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.queue-container button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+}

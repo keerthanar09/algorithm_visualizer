@@ -11,7 +11,7 @@ function PathFindList() {
         <a href="#" class="list-group-item list-group-item-action">
           Depth First Search Algorithm
         </a>
-        <a href="#" class="list-group-item list-group-item-action">
+        <a href="/bfs" class="list-group-item list-group-item-action">
           Breath First Search Algorithm
         </a>
         <a href="/dj" class="list-group-item list-group-item-action">
