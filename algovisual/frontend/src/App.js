@@ -9,12 +9,11 @@ import MergeVizPage from './pages/MergeSortViz';
 import QuickVizPage from './pages/QuickSortViz';
 import SelVizPage from './pages/SelSort';
 import AlgorithmList from './pages/AlgList';
-import NavBar from './components/UI/navbar';
-import DropDown from './components/UI/dropdown';
 import Carousal2 from './components/UI/carousal2';
 import Home from './pages/Home';
 import PathFindingListPage from './pages/Pathfindlist';
 import BellmanVizPage from './pages/Bellman';
+import DijViz from './pages/DjViz';
 
 
 function App() {
@@ -31,6 +30,7 @@ function App() {
           <Route path="/select" element={<SelVizPage />} />
           <Route path="/test" element={<Carousal2 />} />
           <Route path="/bellman" element={<BellmanVizPage/>}/>
+          <Route path="/dj" element={<DijViz/>}/>
       </Routes>
     </Router>
     </div>
