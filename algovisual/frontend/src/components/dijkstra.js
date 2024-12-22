@@ -1,47 +1,38 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-const NODE_COUNT = 6;
-const MAX_WEIGHT = 15;
 
 const DijkstraVisualizer = () => {
   const canvasRef = useRef(null);
   const [sourceNode, setSourceNode] = useState(0);
+  const [nodeCount, setNodeCount] = useState(6);
+  const [maxWeight, setMaxWeight] = useState(10);
   const [result, setResult] = useState("");
-  let nodes = [];
-  let edges = [];
-  let graph = [];
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
+  const [graph, setGraph] = useState([]);
 
-  const generateRandomGraph = () => {
-    nodes = [];
-    edges = [];
-    graph = Array.from({ length: NODE_COUNT }, () => Array(NODE_COUNT).fill(Infinity));
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = 150;
-
-    for (let i = 0; i < NODE_COUNT; i++) {
-      const angle = (i * 2 * Math.PI) / NODE_COUNT;
-      nodes.push({
-        id: i,
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle),
-      });
+  useEffect(() => {
+    if (nodes.length > 0 && edges.length > 0) {
+      drawGraph();
     }
-
-    for (let i = 0; i < NODE_COUNT; i++) {
-      for (let j = i + 1; j < NODE_COUNT; j++) {
-        if (Math.random() > 0.5) {
-          const weight = Math.ceil(Math.random() * MAX_WEIGHT);
-          graph[i][j] = weight;
-          graph[j][i] = weight;
-          edges.push({ from: i, to: j, weight });
-        }
-      }
+  }, [nodes, edges]);
+  
+  const fetchGraph = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/get_graph_data/?node_count=${nodeCount}&max_weight=${maxWeight}`
+      );
+      const data = await response.json();
+      console.log("Fetched Graph Data:", data);
+      setNodes(Array.isArray(data.nodes) ? data.nodes : []);
+      setEdges(Array.isArray(data.edges) ? data.edges : []);
+      setGraph(data.graph || []);
+    } catch (error) {
+      console.error("Error fetching graph data:", error);
     }
   };
+  
+    
 
   const drawGraph = () => {
     const canvas = canvasRef.current;
@@ -75,16 +66,18 @@ const DijkstraVisualizer = () => {
       ctx.fillStyle = "black";
       ctx.fillText(node.id, node.x - 5, node.y + 5);
     });
-  };
+  }; 
+
+
 
   const visualizeDijkstra = (source) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
     const visited = new Set();
-    const distances = Array(NODE_COUNT).fill(Infinity);
+    const distances = Array(nodes.length).fill(Infinity);
     distances[source] = 0;
-    const previous = Array(NODE_COUNT).fill(null);
+    const previous = Array(nodes.length).fill(null);
     const priorityQueue = new MinPriorityQueue();
     priorityQueue.enqueue(source, 0);
 
@@ -117,7 +110,7 @@ const DijkstraVisualizer = () => {
         clearInterval(interval);
 
         let resultText = `Shortest distances from Node ${source}:\n`;
-        for (let i = 0; i < NODE_COUNT; i++) {
+        for (let i = 0; i < nodes.length; i++) {
           if (i !== source) {
             resultText += `Node ${source} -> Node ${i} --> Distance: ${distances[i] === Infinity ? "Infinity" : distances[i]}\n`;
           }
@@ -131,7 +124,7 @@ const DijkstraVisualizer = () => {
       visited.add(currentNode);
       highlightNode(currentNode, "yellow");
 
-      for (let neighbor = 0; neighbor < NODE_COUNT; neighbor++) {
+      for (let neighbor = 0; neighbor < nodes.length; neighbor++) {
         if (graph[currentNode][neighbor] !== Infinity && !visited.has(neighbor)) {
           const newDist = distances[currentNode] + graph[currentNode][neighbor];
           if (newDist < distances[neighbor]) {
@@ -148,24 +141,52 @@ const DijkstraVisualizer = () => {
   };
 
   const handleStart = () => {
-    if (isNaN(sourceNode) || sourceNode < 0 || sourceNode >= NODE_COUNT) {
+
+    if (nodes.length === 0) {
+      alert("Please generate a graph before starting.");
+      return;
+    }
+    if (isNaN(sourceNode) || sourceNode < 0 || sourceNode >= nodes.length) {
       alert("Please enter a valid source node between 0 and 5.");
       return;
     }
-    generateRandomGraph();
-    drawGraph();
+    drawGraph(nodes, edges);
     visualizeDijkstra(sourceNode);
   };
 
+  
   return (
     <div>
-      <canvas ref={canvasRef} width={400} height={400} style={{ border: "1px solid black" }}></canvas>
+      <div>
+        <label>Node Count: </label>
+        <input
+          type="number"
+          value={nodeCount}
+          onChange={(e) => setNodeCount(Number(e.target.value))}
+          min="2"
+        />
+        <label> Max Weight: </label>
+        <input
+          type="number"
+          value={maxWeight}
+          onChange={(e) => setMaxWeight(Number(e.target.value))}
+          min="1"
+        />
+        <button onClick={fetchGraph}>Generate Graph</button>
+      </div>
+      <canvas
+        ref={canvasRef}
+        width={400}
+        height={400}
+        style={{ border: "1px solid black" }}
+      ></canvas>
       <div>
         <label>Source Node: </label>
         <input
           type="number"
           value={sourceNode}
           onChange={(e) => setSourceNode(Number(e.target.value))}
+          min="0"
         />
         <button onClick={handleStart}>Start</button>
       </div>
@@ -245,5 +266,4 @@ class MinPriorityQueue {
     return this.heap.length === 0;
   }
 }
-
 export default DijkstraVisualizer;
