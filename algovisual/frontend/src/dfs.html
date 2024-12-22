@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Depth First Search Visualization</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+    #graphCanvas {
+      border: 1px solid #ccc;
+      flex: 2;
+      width: 800px;
+      height: 600px;
+    }
+    #stackContainer {
+      flex: 1;
+      padding: 10px;
+      border-left: 1px solid #ccc;
+      max-width: 250px;
+      font-size: 14px;
+    }
+    .container {
+      display: flex;
+      flex: 1;
+    }
+    #controls {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid #ccc;
+    }
+    #startButton {
+      padding: 8px 16px;
+      font-size: 14px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    #startButton:hover {
+      background-color: #0056b3;
+    }
+    .stack-item {
+      padding: 8px;
+      margin: 5px 0;
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    .stack-item.visited {
+      background-color: #a4e0a4;
+    }
+    .stack-item.current {
+      background-color: #f9a4a4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <canvas id="graphCanvas" width="500" height="300"></canvas>
+    <div id="stackContainer">
+      <h3>Stack</h3>
+      <div id="stack"></div>
+    </div>
+  </div>
+  <div id="controls">
+    <button id="startButton">Start Visualization</button>
+  </div>
+
+  <script src="dfs.js"></script>
+</body>
+</html>
