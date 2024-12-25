@@ -30,7 +30,7 @@ async function performSearch() {
   for (let i = 0; i < array.length; i++) {
     const box = document.getElementById(`box-${i}`);
     box.classList.add("highlight"); 
-    await delay(500); 
+    await delay(800); 
     if (array[i] === key) {
       box.classList.remove("highlight");
       box.classList.add("found"); 
