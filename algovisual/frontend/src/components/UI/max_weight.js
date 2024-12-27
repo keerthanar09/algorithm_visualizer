@@ -1,12 +1,12 @@
 import React from "react";
 
-const NumberInput = ({ numElements, setNumElements }) => {
+const MaxWeight = ({ maxWeight, setMaxWeight }) => {
   const handleChange = (e) => {
     const value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value >= 2 && value <= 100) {
-      setNumElements(value);
+    if (!isNaN(value) && value >= 5 && value <= 30) {
+      setMaxWeight(value);
     } else {
-      alert("Please enter a number between 2 and 100.");
+      alert("Please enter a number between 5 and 30.");
     }
   };
 
@@ -16,16 +16,17 @@ const NumberInput = ({ numElements, setNumElements }) => {
         type="number"
         class="form-control"
         id="floatingInput"
-        value={numElements}
+        value={maxWeight}
         onChange={handleChange}
-        min="2"
-        max="50"
+        min="5"
+        max="30"
         placeholder="10"
       ></input>
-      <label for="floatingInput">Enter Number of Elements to sort: </label>
+      <label for="floatingInput">Enter Maximum weight of edges:   </label>
     </div>
 
   );
 };
 
-export default NumberInput;
+export default MaxWeight;
+

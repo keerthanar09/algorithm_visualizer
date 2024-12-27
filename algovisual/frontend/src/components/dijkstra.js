@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import SettingsPF from "./UI/settingsPF";
 
 
 const DijkstraVisualizer = () => {
@@ -156,24 +157,14 @@ const DijkstraVisualizer = () => {
 
   
   return (
-    <div>
-      <div>
-        <label>Node Count: </label>
-        <input
-          type="number"
-          value={nodeCount}
-          onChange={(e) => setNodeCount(Number(e.target.value))}
-          min="2"
-        />
-        <label> Max Weight: </label>
-        <input
-          type="number"
-          value={maxWeight}
-          onChange={(e) => setMaxWeight(Number(e.target.value))}
-          min="1"
-        />
-        <button onClick={fetchGraph}>Generate Graph</button>
-      </div>
+    <div class = "container">
+      <SettingsPF
+        nodeCount={nodeCount}
+        setNodeCount={setNodeCount}
+        maxWeight={maxWeight}
+        setMaxWeight={setMaxWeight}
+        fetchGraph={fetchGraph}
+      />
       <canvas
         ref={canvasRef}
         width={400}
