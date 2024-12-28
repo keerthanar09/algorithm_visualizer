@@ -128,17 +128,10 @@ const BellmanVisualization = () => {
         setMaxWeight={setMaxWeight}
         setNodes={setNodes}
         setEdges={setEdges}
+        handleStart={handleStart}
+        sourceNode={sourceNode}
+        setSourceNode={setSourceNode}
       />
-      <div>
-        <label>Source Node: </label>
-        <input
-          type="number"
-          value={sourceNode}
-          onChange={(e) => setSourceNode(Number(e.target.value))}
-          min="0"
-        />
-        <button onClick={handleStart}>Start</button>
-      </div>
       <div ref={sketchRef}></div>
     </div>
   );

@@ -149,6 +149,9 @@ const DijkstraVisualizer = () => {
         setNodes={setNodes}
         setEdges={setEdges}
         setGraph={setGraph}
+        handleStart={handleStart}
+        sourceNode={sourceNode}
+        setSourceNode={setSourceNode}
       />
       <canvas
         ref={canvasRef}
@@ -156,16 +159,6 @@ const DijkstraVisualizer = () => {
         height={400}
         style={{ border: "1px solid black" }}
       ></canvas>
-      <div>
-        <label>Source Node: </label>
-        <input
-          type="number"
-          value={sourceNode}
-          onChange={(e) => setSourceNode(Number(e.target.value))}
-          min="0"
-        />
-        <button onClick={handleStart}>Start</button>
-      </div>
       <pre>{result}</pre>
     </div>
   );

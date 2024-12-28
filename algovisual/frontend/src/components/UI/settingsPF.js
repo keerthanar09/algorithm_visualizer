@@ -3,19 +3,19 @@ import GenerateGraph from "./gengraph";
 import MaxWeight from "./max_weight";
 import "./styles/styles.css"
 import NodeCount from "./node_count";
-const SettingsPF = ({ nodeCount, setNodeCount, maxWeight, setMaxWeight, fetchGraph, setNodes, setEdges, setGraph }) => {
+const SettingsPF = ({ nodeCount, setNodeCount, maxWeight, setMaxWeight, fetchGraph, setNodes, setEdges, setGraph, handleStart, sourceNode, setSourceNode }) => {
     const handleNodeCountChange = (e) => {
       const value = parseInt(e.target.value, 6);
       if (value > 0 && value <= 100) {
         setNodeCount(value);
-        fetchGraph(); // Fetch new data whenever the array size is updated
+        fetchGraph(); 
       }
     };
       const handleMaxWeightChange = (e) => {
         const value1 = parseInt(e.target.value1, 10);
         if (value1 > 0 && value1 <= 100) {
           setMaxWeight(value1);
-          fetchGraph(); // Fetch new data whenever the array size is updated
+          fetchGraph(); 
         }
       };
     
@@ -35,14 +35,38 @@ const SettingsPF = ({ nodeCount, setNodeCount, maxWeight, setMaxWeight, fetchGra
           </svg>{" "}
           &nbsp; Settings
         </h3>
-        <NodeCount value={nodeCount} setNodeCount={setNodeCount} onChange={handleNodeCountChange}/>
-        <MaxWeight value={maxWeight} setMaxWeight={setMaxWeight} onChange={handleMaxWeightChange}/>
-        <GenerateGraph nodeCount={nodeCount}
-                maxWeight={maxWeight}
-                setNodes={setNodes}
-                setEdges={setEdges}
-                setGraph={setGraph}
-/>
+        <NodeCount
+          value={nodeCount}
+          setNodeCount={setNodeCount}
+          onChange={handleNodeCountChange}
+        />
+        <MaxWeight
+          value={maxWeight}
+          setMaxWeight={setMaxWeight}
+          onChange={handleMaxWeightChange}
+        />
+      <div class="form-floating mb-3">
+      <input
+        type="number"
+        class="form-control"
+        id="floatingInput"
+        value={sourceNode}
+        onChange={(e) => setSourceNode(Number(e.target.value))}
+        min="0"
+        placeholder="0"
+      ></input>
+      <label>Source Node:  </label>
+    </div>
+    <GenerateGraph
+          nodeCount={nodeCount}
+          maxWeight={maxWeight}
+          setNodes={setNodes}
+          setEdges={setEdges}
+          setGraph={setGraph}
+        />
+        <button class="btn btn-outline-dark" onClick={handleStart}>Start</button>
+
+
         {/* <PlayPauseButton isPlaying={isPlaying} togglePlayPause={togglePlayPause} /> */}
       </div>
     );

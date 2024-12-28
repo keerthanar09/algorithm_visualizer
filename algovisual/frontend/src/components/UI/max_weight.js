@@ -22,7 +22,7 @@ const MaxWeight = ({ maxWeight, setMaxWeight }) => {
         max="30"
         placeholder="10"
       ></input>
-      <label for="floatingInput">Enter Maximum weight of edges:   </label>
+      <label>Enter Maximum weight of edges:   </label>
     </div>
 
   );

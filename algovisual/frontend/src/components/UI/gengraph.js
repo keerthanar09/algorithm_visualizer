@@ -17,7 +17,7 @@ const GenerateGraph = ({ nodeCount, maxWeight, setNodes, setEdges, setGraph }) =
   };
 
   return (
-    <button onClick={fetchGraph}>
+    <button class="btn btn-outline-dark" onClick={fetchGraph}> 
       Generate Graph
     </button>
   );
