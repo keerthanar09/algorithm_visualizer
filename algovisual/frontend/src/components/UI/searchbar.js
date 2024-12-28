@@ -47,8 +47,13 @@ const SearchBar = () => {
               top: "40px",
               width: "100%",
               backgroundColor: "white",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
               listStyleType: "none",
               padding: "10px",
+              margin: 0,
+              maxHeight: "200px",
+              overflowY: "auto",
               boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
               zIndex: 1000,
             }}
@@ -57,13 +62,16 @@ const SearchBar = () => {
               <li
                 key={result.slno}
                 onClick={() => handleSelect(result.path)}
-                style={{
-                  padding: "10px",
-                  cursor: "pointer",
-                  borderBottom: "1px solid #ddd",
-                }}
+                class="list-group-item"
+                onMouseOver={(e) =>
+                  (e.target.style.backgroundColor = "#f5f5f5")
+                }
+                onMouseOut={(e) => (e.target.style.backgroundColor = "white")}
               >
-                {result.name}
+                <span style={{ color: "black", fontSize: "18px" }}>
+                  {result.name || result.catID__name}
+                </span>
+
               </li>
             ))}
           </ul>

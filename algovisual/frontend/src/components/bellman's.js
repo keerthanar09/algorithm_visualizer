@@ -1,195 +1,147 @@
-/* global p5, p, useState, createCanvas, frameRate, random, height, width, background, stroke, fill, rect, noLoop */
+/* global p5 */
 
 import React, { useRef, useEffect, useState } from "react";
 import p5 from "p5";
-import axios from "axios";
-import Settings from "./UI/settings";
+import SettingsPF from "./UI/settingsPF";
 
 const BellmanVisualization = () => {
-  const [values, setValues] = useState([]);
-  const [numElements, setNumElements] = useState(10);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [sourceNode, setSourceNode] = useState(0);
+  const [nodeCount, setNodeCount] = useState(6);
+  const [maxWeight, setMaxWeight] = useState(10);
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
   const sketchRef = useRef();
   const p5InstanceRef = useRef(null);
-  const generateGraphButtonRef = useRef(null);
-  const startButtonRef = useRef(null);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/get_sorting_data/?num_elements=${numElements}`
-      );
-      if (Array.isArray(response.data)) {
-        setValues(response.data);
-      } else {
-        console.error("Invalid data format from API");
+  // Bellman-Ford visualization
+  const visualizeBellmanFord = async (p, sourceNode) => {
+    const distances = Array(nodes.length).fill(Infinity);
+    distances[sourceNode] = 0;
+
+    for (let i = 0; i < nodes.length - 1; i++) {
+      for (const edge of edges) {
+        const { from, to, weight } = edge;
+
+        if (distances[from] + weight < distances[to]) {
+          distances[to] = distances[from] + weight;
+
+          // Highlight the edge
+          p.highlightEdge(edge, "blue");
+          await p.sleep(1000);
+          p.drawGraph();
+        }
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    }
+
+    let hasNegativeCycle = false;
+    for (const edge of edges) {
+      const { from, to, weight } = edge;
+      if (distances[from] + weight < distances[to]) {
+        hasNegativeCycle = true;
+        break;
+      }
+    }
+
+    if (hasNegativeCycle) {
+      alert("Graph contains a negative weight cycle!");
+    } else {
+      const message = distances
+        .map((distance, index) => `Vertex ${index}: Distance = ${distance}`)
+        .join("\n");
+      alert(`Algorithm completed. Shortest distances:\n${message}`);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [numElements]);
-
-  useEffect(() => {
-    if (values.length === 0) {
-      return;
-    }
-    const sketch = (p) => {
-      let vertices = [];
-      let edges = [];
-      p.setup = () => {
-        p.createCanvas(400, 400);
-        p.frameRate(1);
-        p.generateRandomGraph();
-      };
-
-      p.generateRandomGraph = () => {
-        const vertexCount = Math.floor(Math.random() * 4) + 3;
-        vertices = [];
-        edges = [];
-        for (let i = 0; i < vertexCount; i++) {
-          vertices.push({
-            id: i,
-            x: Math.floor(Math.random() * (p.width - 50)) + 25,
-            y: Math.floor(Math.random() * (p.height - 50)) + 25,
-          });
-        }
-        for (let i = 0; i < vertexCount - 1; i++) {
-          for (let j = i + 1; j < vertexCount; j++) {
-            if (Math.random() > 0.5) {
-              edges.push({
-                from: i,
-                to: j,
-                weight: Math.floor(Math.random() * 10) + 1,
-              });
-            }
-          }
-        }
-
-        p.drawGraph();
-      };
-      p.drawGraph = () => {
-        p.background(255);
-        edges.forEach((edge) => {
-          const fromVertex = vertices[edge.from];
-          const toVertex = vertices[edge.to];
-
-          p.stroke(0);
-          p.line(fromVertex.x, fromVertex.y, toVertex.x, toVertex.y);
-          const midX = (fromVertex.x + toVertex.x) / 2;
-          const midY = (fromVertex.y + toVertex.y) / 2;
-          p.fill(255, 0, 0);
-          p.text(edge.weight, midX, midY);
-        });
-        vertices.forEach((vertex) => {
-            p.fill(173, 216, 230); // Light blue
-            p.ellipse(vertex.x, vertex.y, 40, 40);
-            p.fill(0);
-            p.text(vertex.id, vertex.x - 5, vertex.y + 5);
-          });
-      };
-      p.highlightEdge = (edge, color) => {
-        const fromVertex = vertices[edge.from];
-        const toVertex = vertices[edge.to];
-        p.stroke(color);
-        p.strokeWeight(3);
-        p.line(fromVertex.x, fromVertex.y, toVertex.x, toVertex.y);
-      };
-      p.visualizeBellmanFord = async () => {
-        const distances = Array(vertices.length).fill(Infinity);
-        distances[0] = 0;
-
-        for (let i = 0; i < vertices.length - 1; i++) {
-          for (const edge of edges) {
-            const { from, to, weight } = edge;
-
-            if (distances[from] + weight < distances[to]) {
-              distances[to] = distances[from] + weight;
-              p.highlightEdge(edge, "blue");
-              await p.sleep(1000);
-              p.drawGraph();
-            }
-          }
-        }
-        let hasNegativeCycle = false;
-        for (const edge of edges) {
-          const { from, to, weight } = edge;
-          if (distances[from] + weight < distances[to]) {
-            hasNegativeCycle = true;
-            break;
-          }
-        }
-
-        if (hasNegativeCycle) {
-          alert("Graph contains a negative weight cycle!");
-        } else {
-          let message = "Algorithm completed. Shortest distances:\n";
-          distances.forEach((distance, index) => {
-            message += `Vertex ${index}: Distance = ${distance}`;
-          });
-          alert(message);
-        }
-      };
-
-      p.sleep = (ms) => {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-      };
+  // p5 sketch
+  const Sketch = (p) => {
+    p.setup = () => {
+      p.createCanvas(400, 400);
+      p.frameRate(30);
+      p.drawGraph();
     };
-    p5InstanceRef.current = new p5(sketch, sketchRef.current);
+
+    p.drawGraph = () => {
+      p.background(255);
+      edges.forEach((edge) => {
+        const fromVertex = nodes[edge.from];
+        const toVertex = nodes[edge.to];
+
+        p.stroke(0);
+        p.line(fromVertex.x, fromVertex.y, toVertex.x, toVertex.y);
+
+        // Draw edge weight
+        const midX = (fromVertex.x + toVertex.x) / 2;
+        const midY = (fromVertex.y + toVertex.y) / 2;
+        p.fill(255, 0, 0);
+        p.text(edge.weight, midX, midY);
+      });
+
+      nodes.forEach((vertex) => {
+        p.fill(173, 216, 230);
+        p.ellipse(vertex.x, vertex.y, 40, 40);
+        p.fill(0);
+        p.text(vertex.id, vertex.x - 5, vertex.y + 5);
+      });
+    };
+
+    p.highlightEdge = (edge, color) => {
+      const fromVertex = nodes[edge.from];
+      const toVertex = nodes[edge.to];
+
+      p.stroke(color);
+      p.strokeWeight(3);
+      p.line(fromVertex.x, fromVertex.y, toVertex.x, toVertex.y);
+    };
+
+    p.sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  useEffect(() => {
+    if (!p5InstanceRef.current) {
+      p5InstanceRef.current = new p5(Sketch, sketchRef.current);
+    }
 
     return () => {
       p5InstanceRef.current.remove();
+      p5InstanceRef.current = null;
     };
-  }, [values]);
+  }, [nodes, edges]);
 
-  // This function is to implement the pause and play functionality
-  const togglePlayPause = () => {
-    setIsPlaying((prev) => {
-      if (prev) {
-        p5InstanceRef.current.noLoop(); // The loop is stopped and visualization is paused
-      } else {
-        p5InstanceRef.current.loop(); //When play is pressed, the loop is continued from where it was stopped.
-      }
-      return !prev;
-    });
+  const handleStart = () => {
+    if (nodes.length === 0) {
+      alert("Please generate a graph using the settings panel.");
+      return;
+    }
+    if (isNaN(sourceNode) || sourceNode < 0 || sourceNode >= nodes.length) {
+      alert("Please enter a valid source node.");
+      return;
+    }
+    visualizeBellmanFord(p5InstanceRef.current, sourceNode);
   };
-  useEffect(() => {
-    const generateGraphButton = generateGraphButtonRef.current;
-    const startButton = startButtonRef.current;
 
-    const generateRandomGraph = () => {
-      p5InstanceRef.current.generateRandomGraph();
-    };
-
-    const visualizeBellmanFord = () => {
-      p5InstanceRef.current.visualizeBellmanFord();
-    };
-
-    generateGraphButton.addEventListener("click", generateRandomGraph);
-    startButton.addEventListener("click", visualizeBellmanFord);
-
-    // Cleanup event listeners on unmount
-    return () => {
-      generateGraphButton.removeEventListener("click", generateRandomGraph);
-      startButton.removeEventListener("click", visualizeBellmanFord);
-    };
-  }, []);
   return (
-    <div class="container1">
-      {/* <Settings
-        numElements={numElements}
-        setNumElements={setNumElements}
-        togglePlayPause={togglePlayPause}
-        isPlaying={isPlaying}
-        fetchData={fetchData}
-      /> */}
-      <div class="vis" ref={sketchRef}></div>
-      <button ref={generateGraphButtonRef}>Generate Graph</button>
-      <button ref={startButtonRef}>Start Bellman Ford</button>
+    <div class="container">
+      <SettingsPF
+        nodeCount={nodeCount}
+        setNodeCount={setNodeCount}
+        maxWeight={maxWeight}
+        setMaxWeight={setMaxWeight}
+        setNodes={setNodes}
+        setEdges={setEdges}
+      />
+      <div>
+        <label>Source Node: </label>
+        <input
+          type="number"
+          value={sourceNode}
+          onChange={(e) => setSourceNode(Number(e.target.value))}
+          min="0"
+        />
+        <button onClick={handleStart}>Start</button>
+      </div>
+      <div ref={sketchRef}></div>
     </div>
   );
 };
+
 export default BellmanVisualization;

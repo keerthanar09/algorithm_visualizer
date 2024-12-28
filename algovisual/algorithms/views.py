@@ -6,6 +6,7 @@ import random, math
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Algorithms1
+from django.db.models import Q
 
 # Create your views here.
 def index(request):
@@ -81,6 +82,6 @@ def search_algorithms(request):
     if request.method == "GET":
         query = request.GET.get("query", "")
         if query:
-            results = Algorithms1.objects.filter(name__icontains=query).values("slno", "name", "path")
+            results = Algorithms1.objects.filter( Q(name__icontains=query) | Q(catID__name__icontains=query)).values("slno", "name", "path", "catID__name")
             return JsonResponse(list(results), safe=False)
         return JsonResponse([], safe=False)
