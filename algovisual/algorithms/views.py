@@ -4,6 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 import random, math
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Algorithms1
 
 # Create your views here.
 def index(request):
@@ -73,3 +75,12 @@ def get_graph_data(request, format = None):
         return JsonResponse({'error': 'Invalid parameters'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+@csrf_exempt
+def search_algorithms(request):
+    if request.method == "GET":
+        query = request.GET.get("query", "")
+        if query:
+            results = Algorithms1.objects.filter(name__icontains=query).values("slno", "name", "path")
+            return JsonResponse(list(results), safe=False)
+        return JsonResponse([], safe=False)

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import SettingsPF from "./UI/settingsPF";
-
+import GenerateGraph from "./UI/gengraph";
 
 const DijkstraVisualizer = () => {
   const canvasRef = useRef(null);
@@ -18,23 +18,6 @@ const DijkstraVisualizer = () => {
     }
   }, [nodes, edges]);
   
-  const fetchGraph = async () => {
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/get_graph_data/?node_count=${nodeCount}&max_weight=${maxWeight}`
-      );
-      const data = await response.json();
-      console.log("Fetched Graph Data:", data);
-      setNodes(Array.isArray(data.nodes) ? data.nodes : []);
-      setEdges(Array.isArray(data.edges) ? data.edges : []);
-      setGraph(data.graph || []);
-    } catch (error) {
-      console.error("Error fetching graph data:", error);
-    }
-  };
-  
-    
-
   const drawGraph = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -163,7 +146,9 @@ const DijkstraVisualizer = () => {
         setNodeCount={setNodeCount}
         maxWeight={maxWeight}
         setMaxWeight={setMaxWeight}
-        fetchGraph={fetchGraph}
+        setNodes={setNodes}
+        setEdges={setEdges}
+        setGraph={setGraph}
       />
       <canvas
         ref={canvasRef}

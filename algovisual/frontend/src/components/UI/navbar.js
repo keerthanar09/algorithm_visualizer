@@ -1,6 +1,7 @@
 import "./styles/styles.css";
 import "animate.css";
 import "animate.css/source/animate.css";
+import SearchBar from "./searchbar";
 
 {
   /*Not gonna change the name of the function for convenience as i'd have to change it everywhere
@@ -29,26 +30,7 @@ function NavBar() {
               </svg>
               &nbsp; Home
             </a>
-            <form class="d-flex" role="search">
-              <input
-                class="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              ></input>
-              <button class="btn btn-outline-primary" type="submit">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="25"
-                  height="25"
-                  fill="currentColor"
-                  class="bi bi-search"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                </svg>
-              </button>
-            </form>
+            <SearchBar/>
           </div>
         </nav>
       </div>
