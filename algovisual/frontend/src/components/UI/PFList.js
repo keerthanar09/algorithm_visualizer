@@ -8,7 +8,7 @@ function PathFindList() {
         >
           Bellman Ford's Algorithm
         </a>
-        <a href="#" class="list-group-item list-group-item-action">
+        <a href="/dfs" class="list-group-item list-group-item-action">
           Depth First Search Algorithm
         </a>
         <a href="/bfs" class="list-group-item list-group-item-action">

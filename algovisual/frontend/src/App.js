@@ -15,6 +15,7 @@ import PathFindingListPage from './pages/Pathfindlist';
 import BellmanVizPage from './pages/Bellman';
 import DijViz from './pages/DjViz';
 import BFSVisPage from './pages/bfsviz';
+import DFSVisPage from './pages/dfspage';
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           <Route path="/bellman" element={<BellmanVizPage/>}/>
           <Route path="/dj" element={<DijViz/>}/>
           <Route path="/bfs" element={<BFSVisPage/>}/>
+          <Route path="/dfs" element={<DFSVisPage/>}/>
       </Routes>
     </Router>
     </div>
