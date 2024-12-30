@@ -62,7 +62,7 @@ const BinarySearchVisualization = () => {
 
   return (
     <div className="binary-search-visualization">
-      <h1>Binary Search Visualization</h1>
+
       <div className="array-container">
         {array.map((num, index) => (
           <div

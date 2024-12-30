@@ -53,7 +53,7 @@ const LinearSearchVisualization = () => {
 
   return (
     <div className="search-visualization">
-      <h1>Linear Search Visualization</h1>
+
       <div className="array-container">
         {array.map((num, index) => (
           <div
