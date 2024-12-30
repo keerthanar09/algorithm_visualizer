@@ -55,7 +55,7 @@ function Carousal2() {
                   <p class="card-text">
                     Click the button below to find a list of Search algorithms to visualize!
                   </p>
-                  <a href="#" class="btn btn-primary">
+                  <a href="/SearchList" class="btn btn-primary">
                     View List
                   </a>
                 </div>

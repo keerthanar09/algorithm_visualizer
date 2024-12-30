@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import "./bfs.css";
 
 const DFSVisualization = () => {
@@ -13,7 +13,7 @@ const DFSVisualization = () => {
 
     const generateRandomGraph = () => {
       const nodes = [];
-      const numNodes = Math.floor(Math.random() * 2) + 5;
+      const numNodes = Math.floor(Math.random() * 3) + 5;
       for (let i = 0; i < numNodes; i++) {
         nodes.push(String.fromCharCode(65 + i));
       }
@@ -28,9 +28,10 @@ const DFSVisualization = () => {
 
       return graph;
     };
+
     const generateRandomPositions = (nodes) => {
       const positions = {};
-      nodes.forEach((node, index) => {
+      nodes.forEach((node) => {
         positions[node] = {
           x: Math.random() * 400 + 50,
           y: Math.random() * 200 + 50,
@@ -38,6 +39,7 @@ const DFSVisualization = () => {
       });
       return positions;
     };
+
     const drawGraph = (graph, positions, highlightNode = null) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       Object.keys(graph).forEach((node) => {
@@ -63,6 +65,7 @@ const DFSVisualization = () => {
         ctx.fillText(node, x, y);
       });
     };
+
     const updateStack = (stack, currentNode = null) => {
       const stackContainer = queueRef.current;
       stackContainer.innerHTML = "";
@@ -79,6 +82,7 @@ const DFSVisualization = () => {
         stackContainer.appendChild(div);
       });
     };
+
     const dfs = async (graph, startNode, positions) => {
       const stack = [startNode];
       const visited = new Set();
@@ -100,16 +104,21 @@ const DFSVisualization = () => {
         }
       }
     };
+
     const randomGraph = generateRandomGraph();
     const nodePositions = generateRandomPositions(Object.keys(randomGraph));
-    drawGraph(ctx, randomGraph, nodePositions);
+    drawGraph(randomGraph, nodePositions);
+
     const startButton = document.getElementById("startButton");
-    startButton.addEventListener("click", () => {
-      drawGraph(ctx, randomGraph, nodePositions);
-      dfs(Object.keys(randomGraph)[0], randomGraph, nodePositions);
-    });
+    const handleClick = () => {
+      drawGraph(randomGraph, nodePositions);
+      dfs(randomGraph, Object.keys(randomGraph)[0], nodePositions);
+    };
+
+    startButton.addEventListener("click", handleClick);
+
     return () => {
-      startButton.removeEventListener("click", () => {});
+      startButton.removeEventListener("click", handleClick);
     };
   }, []);
 
@@ -119,11 +128,12 @@ const DFSVisualization = () => {
         <canvas ref={canvasRef} id="graphCanvas"></canvas>
       </div>
       <div className="queue-container">
-        <h2>Queue</h2>
-        <ul ref={queueRef} id="queue"></ul>
+        <h2>Stack</h2>
+        <div ref={queueRef} id="stack"></div>
         <button id="startButton">Start Visualization</button>
       </div>
     </div>
   );
 };
+
 export default DFSVisualization;

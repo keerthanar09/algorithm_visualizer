@@ -16,6 +16,10 @@ import BellmanVizPage from './pages/Bellman';
 import DijViz from './pages/DjViz';
 import BFSVisPage from './pages/bfsviz';
 import DFSVisPage from './pages/dfspage';
+import LinearSearchPage from './pages/linpage';
+import BinarySearchPage from './pages/binpage';
+import SearchAlgorithmList from './components/UI/SearchList';
+import SearchListPage from './pages/serpage';
 
 
 function App() {
@@ -35,6 +39,9 @@ function App() {
           <Route path="/dj" element={<DijViz/>}/>
           <Route path="/bfs" element={<BFSVisPage/>}/>
           <Route path="/dfs" element={<DFSVisPage/>}/>
+          <Route path="/SearchList" element={<SearchListPage/>}/>
+          <Route path="/lin" element={<LinearSearchPage/>}/>
+          <Route path="/bin" element={<BinarySearchPage/>}/>
       </Routes>
     </Router>
     </div>
