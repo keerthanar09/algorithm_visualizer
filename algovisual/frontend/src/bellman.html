@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bellman-Ford Algorithm Visualization</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .controls {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px;
+    }
+    canvas {
+      border: 1px solid black;
+    }
+    .shortest-paths {
+      width: 300px;
+      text-align: left;
+      font-size: 14px;
+    }
+    .shortest-paths h2 {
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .shortest-paths div {
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bellman-Ford Algorithm Visualization</h1>
+  <div class="controls">
+    <button onclick="generateGraph()">Generate Random Graph</button>
+    <button onclick="runBellmanFord()">Run Bellman-Ford</button>
+    Starting Node: <input type="number" id="startNodeInput" min="0" max="9" value="0">
+  </div>
+  <div class="container">
+    <canvas id="graphCanvas" width="500" height="500"></canvas>
+    <div class="shortest-paths">
+      <h2>Shortest Paths</h2>
+      <div id="shortestPaths"></div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    const shortestPathsDiv = document.getElementById('shortestPaths');
+    const NODE_RADIUS = 20;
+
+    let graph = [];
+    let edges = [];
+
+    function generateGraph() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      shortestPathsDiv.innerHTML = '';
+      graph = [];
+      edges = [];
+
+      const numNodes = 6; 
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = 200;
+      for (let i = 0; i < numNodes; i++) {
+        const angle = (2 * Math.PI * i) / numNodes;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        graph.push({ x, y, dist: Infinity });
+      }
+      for (let i = 0; i < numNodes; i++) {
+        for (let j = i + 1; j < numNodes; j++) {
+          if (Math.random() < 0.6) {
+            const weight = Math.floor(Math.random() * 20) + 1;
+            edges.push({ from: i, to: j, weight });
+            edges.push({ from: j, to: i, weight }); 
+          }
+        }
+      }
+      drawGraph();
+    }
+
+    function drawGraph() {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'black';
+      edges.forEach(edge => {
+        const from = graph[edge.from];
+        const to = graph[edge.to];
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+
+        const weightX = (from.x + to.x) / 2 + 10; 
+        const weightY = (from.y + to.y) / 2 - 10; 
+        ctx.fillStyle = 'white';
+        ctx.fillRect(weightX - 10, weightY - 10, 30, 20); 
+        ctx.fillStyle = 'black';
+        ctx.font = '14px Arial';
+        ctx.fillText(edge.weight, weightX, weightY);
+      });
+
+      graph.forEach((node, index) => {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, NODE_RADIUS, 0, 2 * Math.PI);
+        ctx.fillStyle = 'lightgreen';
+        ctx.fill();
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+
+        ctx.fillStyle = 'black';
+        ctx.font = '14px Arial';
+        ctx.fillText(index, node.x - 5, node.y + 5);
+      });
+    }
+
+    async function runBellmanFord() {
+      const startNode = parseInt(document.getElementById('startNodeInput').value);
+      if (isNaN(startNode) || startNode < 0 || startNode >= graph.length) {
+        alert('Please enter a valid starting node!');
+        return;
+      }
+
+      graph.forEach(node => node.dist = Infinity);
+      graph[startNode].dist = 0;
+
+      for (let i = 0; i < graph.length - 1; i++) {
+        let updated = false;
+
+        for (const edge of edges) {
+          const fromNode = graph[edge.from];
+          const toNode = graph[edge.to];
+
+          if (fromNode.dist !== Infinity && fromNode.dist + edge.weight < toNode.dist) {
+            toNode.dist = fromNode.dist + edge.weight;
+            updated = true;
+            await highlightEdge(edge.from, edge.to, 'green');
+          }
+        }
+
+        if (!updated) break;
+      }
+
+      for (const edge of edges) {
+        const fromNode = graph[edge.from];
+        const toNode = graph[edge.to];
+        if (fromNode.dist + edge.weight < toNode.dist) {
+          alert('Graph contains a negative weight cycle!');
+          return;
+        }
+      }
+
+      displayShortestPaths(startNode);
+    }
+
+    async function highlightEdge(from, to, color) {
+      const fromNode = graph[from];
+      const toNode = graph[to];
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(fromNode.x, fromNode.y);
+      ctx.lineTo(toNode.x, toNode.y);
+      ctx.stroke();
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      drawGraph(); 
+    }
+
+    function displayShortestPaths(startNode) {
+      shortestPathsDiv.innerHTML = '';
+      graph.forEach((node, index) => {
+        shortestPathsDiv.innerHTML += `Node ${startNode} → Node ${index}: Shortest Distance → ${node.dist}<br>`;
+      });
+    }
+
+    generateGraph();
+  </script>
+</body>
+</html>
