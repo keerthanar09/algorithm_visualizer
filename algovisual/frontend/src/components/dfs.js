@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import "./bfs.css";
+import "./static/bfs.css"; 
 
 const DFSVisualization = () => {
   const canvasRef = useRef(null);

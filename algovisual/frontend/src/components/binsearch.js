@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./static/bin.css"; 
 
 const BinarySearchVisualization = () => {
   const [array, setArray] = useState([]);
@@ -7,12 +8,11 @@ const BinarySearchVisualization = () => {
   const [highlightIndex, setHighlightIndex] = useState(null);
   const [foundIndex, setFoundIndex] = useState(null);
 
-  // Generate a sorted random array on mount
+
   useEffect(() => {
     generateRandomSortedArray();
   }, []);
 
-  // Function to generate a sorted random array
   const generateRandomSortedArray = () => {
     const newArray = Array.from({ length: 10 }, () =>
       Math.floor(Math.random() * 100)

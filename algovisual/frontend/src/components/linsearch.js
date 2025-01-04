@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./static/lin.css"; 
 
 const LinearSearchVisualization = () => {
   const [array, setArray] = useState([]);

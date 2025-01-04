@@ -1,0 +1,31 @@
+.box {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid black;
+    background-color: white;
+    transition: background-color 0.3s;
+}
+
+.highlight {
+    background-color: yellow;
+}
+
+.found {
+    background-color: lightgreen;
+}
+
+.not-found {
+    background-color: lightcoral;
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
