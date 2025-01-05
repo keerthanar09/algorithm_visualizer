@@ -4,6 +4,7 @@ import "./UI/styles/bfs.css";
 const BFSVisualization = () => {
   const canvasRef = useRef(null);
   const queueRef = useRef(null);
+  const traversalRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -31,12 +32,22 @@ const BFSVisualization = () => {
 
     const generateRandomPositions = (nodes) => {
       const positions = {};
+      const isOverlapping = (x1, y1, x2, y2) =>
+        Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2) < 40;
+
       nodes.forEach((node) => {
-        positions[node] = {
-          x: Math.random() * 400 + 50,
-          y: Math.random() * 200 + 50,
-        };
+        let x, y, overlapping;
+        do {
+          x = Math.random() * (canvas.width - 100) + 50;
+          y = Math.random() * (canvas.height - 100) + 50;
+          overlapping = Object.values(positions).some(({ x: x2, y: y2 }) =>
+            isOverlapping(x, y, x2, y2)
+          );
+        } while (overlapping);
+
+        positions[node] = { x, y };
       });
+
       return positions;
     };
 
@@ -89,40 +100,25 @@ const BFSVisualization = () => {
       });
     };
 
-    const bestFirstSearch = async (start, graph, nodePositions) => {
+    const bfs = async (start, graph, positions) => {
       const queue = [start];
       const visited = new Set();
+      const traversalOrder = [];
       updateQueueDisplay(queue);
 
       while (queue.length > 0) {
-        const current = queue.shift();
+        const currentNode = queue.shift();
         updateQueueDisplay(queue);
 
-        if (!visited.has(current)) {
-          visited.add(current);
-          const position = nodePositions[current];
-          if (!position) {
-            console.error(`Position for node "${current}" not found.`);
-            continue;
-          }
+        if (!visited.has(currentNode)) {
+          visited.add(currentNode);
+          traversalOrder.push(currentNode);
 
-          const { x, y } = position;
+          // Highlight current node
+          drawGraph(graph, positions, currentNode);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
 
-          ctx.beginPath();
-          ctx.arc(x, y, 20, 0, Math.PI * 2);
-          ctx.fillStyle = "#ff5722";
-          ctx.fill();
-          ctx.strokeStyle = "#fff";
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.fillStyle = "#fff";
-          ctx.font = "14px Arial";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(current, x, y);
-
-          await new Promise((resolve) => setTimeout(resolve, 1500));
-          graph[current]?.forEach((neighbor) => {
+          graph[currentNode]?.forEach((neighbor) => {
             if (!visited.has(neighbor)) {
               queue.push(neighbor);
             }
@@ -130,19 +126,23 @@ const BFSVisualization = () => {
           updateQueueDisplay(queue);
         }
       }
-      updateQueueDisplay(queue, true);
+
+      // Display traversal order
+      const traversalContainer = traversalRef.current;
+      traversalContainer.textContent = `BFS Traversal: ${traversalOrder.join(" -> ")}`;
     };
 
     const randomGraph = generateRandomGraph();
     const nodePositions = generateRandomPositions(Object.keys(randomGraph));
-
     drawGraph(randomGraph, nodePositions);
 
     const startButton = document.getElementById("startButton");
     const handleStart = () => {
       drawGraph(randomGraph, nodePositions);
-      bestFirstSearch(Object.keys(randomGraph)[0], randomGraph, nodePositions);
+      traversalRef.current.textContent = ""; // Clear previous traversal
+      bfs(Object.keys(randomGraph)[0], randomGraph, nodePositions);
     };
+
     startButton.addEventListener("click", handleStart);
 
     return () => {
@@ -151,17 +151,27 @@ const BFSVisualization = () => {
   }, []);
 
   return (
-    <div className="container">
-      <div className="graph-container">
-        <canvas ref={canvasRef} id="graphCanvas"></canvas>
+    <div className="main-container">
+      <div className="controls-container">
+        <div className="stack-container">
+          <h2>Queue</h2>
+          <div ref={queueRef} id="stack" className="traversal-order"></div>
+        </div>
+        <div className="traversal-container">
+          <h2>BFS Traversal</h2>
+          <div ref={traversalRef} id="traversal" className="traversal-order"></div>
+        </div>
+        <button id="startButton" className="start-button">
+          Start Visualization
+        </button>
       </div>
-      <div className="queue-container">
-        <h2>Queue</h2>
-        <ul ref={queueRef} id="queue"></ul>
-        <button id="startButton">Start Visualization</button>
+      <div className="visualization-container">
+        <canvas ref={canvasRef} id="graphCanvas"></canvas>
       </div>
     </div>
   );
+  
+  
 };
 
 export default BFSVisualization;

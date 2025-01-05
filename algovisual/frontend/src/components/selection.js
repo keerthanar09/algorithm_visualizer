@@ -9,7 +9,7 @@ import Settings from "./UI/settings";
 const SelectionSortVisualization = () => {
   const [values, setValues] = useState([]); 
   const [numElements, setNumElements] = useState(10); 
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const sketchRef = useRef();
   const p5InstanceRef = useRef(null);
  
@@ -45,6 +45,7 @@ const SelectionSortVisualization = () => {
         // value = Array.from({ length: 5 }, () => p.random(height));
         minIndex = i;
         p.frameRate(2); 
+        p.noLoop();
       }
       p.draw = () => {
         p.background(220);

@@ -9,7 +9,7 @@ import Settings from "./UI/settings";
 const QuickSortVisualization = () => {
   const [values, setValues] = useState([]); 
   const [numElements, setNumElements] = useState(10); 
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const sketchRef = useRef();
   const p5InstanceRef = useRef(null);
 
@@ -43,14 +43,10 @@ const QuickSortVisualization = () => {
 
       p.setup = () => {
         p.createCanvas(600, 400);
-        // w = p.width / 5; 
-        // for (let i = 0; i < 5; i++) {
-        //   value.push(p.floor(p.random(50, p.height))); 
-        //   states.push(0); 
-        // }
         states = new Array(value.length).fill(-1);
         w = p.width/value.length;
         p.quickSort(value, 0, value.length - 1);
+        p.noLoop();
       };
 
       p.quickSort = async (arr, start, end) => {

@@ -1,0 +1,11 @@
+.mc{
+    display: flex;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+#canv{
+    display: flex;
+    margin-left: 0;
+    margin-right: auto;
+}

@@ -3,7 +3,7 @@ import GenerateGraph from "./gengraph";
 import MaxWeight from "./max_weight";
 import "./styles/styles.css"
 import NodeCount from "./node_count";
-const SettingsPF = ({ nodeCount, setNodeCount, maxWeight, setMaxWeight, fetchGraph, setNodes, setEdges, setGraph, handleStart, sourceNode, setSourceNode }) => {
+const SettingsPF = ({ nodeCount, setNodeCount, maxWeight, setMaxWeight, fetchGraph, setNodes, setEdges, setGraph, handleStart, sourceNode, setSourceNode, setPositions }) => {
     const handleNodeCountChange = (e) => {
       const value = parseInt(e.target.value, 6);
       if (value > 0 && value <= 100) {
@@ -63,6 +63,7 @@ const SettingsPF = ({ nodeCount, setNodeCount, maxWeight, setMaxWeight, fetchGra
           setNodes={setNodes}
           setEdges={setEdges}
           setGraph={setGraph}
+          setPositions={setPositions}
         />
         <button class="btn btn-outline-dark" onClick={handleStart}>Start</button>
 

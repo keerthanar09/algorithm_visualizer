@@ -1,42 +1,73 @@
-.container {
+/* Main container: flexbox layout */
+.main-container {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-
+  flex-direction: row; /* Horizontal layout */
+  height: 100vh; /* Full viewport height */
+  gap: 20px; /* Space between controls and visualization */
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.graph-container {
-  flex: 2;
-}
-
-.queue-container {
-  flex: 1;
-  text-align: center;
-}
-
-#graphCanvas {
-  border: 1px solid #ccc;
-  display: block;
-  margin: 0 auto;
-}
-
-.queue-container ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  height: 200px;
+/* Controls container: left sidebar */
+.controls-container {
+  display: flex;
+  margin-left: 0;
+  margin-right: auto;
+  flex-direction: column; /* Vertical alignment */
+  justify-content: flex-start;
+  align-items: stretch; /* Full-width items */
+  width: 300px; /* Fixed width for controls */
+  background-color: #f8f9fa; /* Light gray background */
+  border: 1px solid #dee2e6; /* Light border */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
   overflow-y: auto;
 }
 
-.queue-container ul li {
-  padding: 5px 10px;
-  border-bottom: 1px solid #eee;
+/* Individual sections inside controls */
+.stack-container,
+.traversal-container {
+  margin-bottom: 20px;
 }
 
-.queue-container button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 14px;
+.traversal-order {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  height: 100px;
+  overflow-y: auto;
+}
+
+.start-button {
+  padding: 10px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
+  text-align: center;
+}
+
+.start-button:hover {
+  background-color: #0056b3;
+}
+
+/* Visualization container: occupies the remaining space */
+.visualization-container {
+  flex: 1; /* Occupies remaining horizontal space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+#graphCanvas {
+  max-width: 100%;
+  max-height: 100%;
 }

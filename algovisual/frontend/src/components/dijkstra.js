@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import SettingsPF from "./UI/settingsPF";
-import GenerateGraph from "./UI/gengraph";
+import "./UI/styles/align.css";
 
 const DijkstraVisualizer = () => {
   const canvasRef = useRef(null);
@@ -11,48 +11,59 @@ const DijkstraVisualizer = () => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
   const [graph, setGraph] = useState([]);
+  const [positions, setPositions] = useState({});
 
   useEffect(() => {
     if (nodes.length > 0 && edges.length > 0) {
       drawGraph();
     }
-  }, [nodes, edges]);
-  
+  }, [nodes, edges, positions]);
+
   const drawGraph = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  
     edges.forEach((edge) => {
-      const fromNode = nodes[edge.from];
-      const toNode = nodes[edge.to];
-
+      const fromNode = positions[edge.from];
+      const toNode = positions[edge.to];
+  
+      if (!fromNode || !toNode) {
+        console.error(`Missing position for nodes: ${edge.from}, ${edge.to}`);
+        return; // Skip rendering this edge if positions are missing
+      }
+  
       ctx.beginPath();
       ctx.moveTo(fromNode.x, fromNode.y);
       ctx.lineTo(toNode.x, toNode.y);
       ctx.strokeStyle = "gray";
       ctx.lineWidth = 1.5;
       ctx.stroke();
-
+  
       const midX = (fromNode.x + toNode.x) / 2;
       const midY = (fromNode.y + toNode.y) / 2;
       ctx.fillStyle = "black";
       ctx.fillText(edge.weight, midX, midY);
     });
-
-    nodes.forEach((node) => {
+  
+    Object.keys(positions).forEach((nodeId) => {
+      const { x, y } = positions[nodeId];
+      if (!x || !y) {
+        console.error(`Missing position for node: ${nodeId}`);
+        return; // Skip rendering this node if position is missing
+      }
+  
       ctx.beginPath();
-      ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
       ctx.fillStyle = "white";
       ctx.fill();
       ctx.strokeStyle = "black";
       ctx.stroke();
       ctx.fillStyle = "black";
-      ctx.fillText(node.id, node.x - 5, node.y + 5);
+      ctx.fillText(nodeId, x - 5, y + 5);
     });
-  }; 
-
-
+  };
+  
 
   const visualizeDijkstra = (source) => {
     const canvas = canvasRef.current;
@@ -66,20 +77,20 @@ const DijkstraVisualizer = () => {
     priorityQueue.enqueue(source, 0);
 
     const highlightNode = (nodeId, color) => {
-      const node = nodes[nodeId];
+      const { x, y } = positions[nodeId];
       ctx.beginPath();
-      ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
       ctx.strokeStyle = "black";
       ctx.stroke();
       ctx.fillStyle = "white";
-      ctx.fillText(node.id, node.x - 5, node.y + 5);
+      ctx.fillText(nodeId, x - 5, y + 5);
     };
 
     const highlightEdge = (from, to, color) => {
-      const fromNode = nodes[from];
-      const toNode = nodes[to];
+      const fromNode = positions[from];
+      const toNode = positions[to];
       ctx.beginPath();
       ctx.moveTo(fromNode.x, fromNode.y);
       ctx.lineTo(toNode.x, toNode.y);
@@ -96,7 +107,9 @@ const DijkstraVisualizer = () => {
         let resultText = `Shortest distances from Node ${source}:\n`;
         for (let i = 0; i < nodes.length; i++) {
           if (i !== source) {
-            resultText += `Node ${source} -> Node ${i} --> Distance: ${distances[i] === Infinity ? "Infinity" : distances[i]}\n`;
+            resultText += `Node ${source} -> Node ${i} --> Distance: ${
+              distances[i] === Infinity ? "Infinity" : distances[i]
+            }\n`;
           }
         }
         setResult(resultText);
@@ -125,7 +138,6 @@ const DijkstraVisualizer = () => {
   };
 
   const handleStart = () => {
-
     if (nodes.length === 0) {
       alert("Please generate a graph before starting.");
       return;
@@ -138,9 +150,8 @@ const DijkstraVisualizer = () => {
     visualizeDijkstra(sourceNode);
   };
 
-  
   return (
-    <div class = "container">
+    <div className="mc">
       <SettingsPF
         nodeCount={nodeCount}
         setNodeCount={setNodeCount}
@@ -152,10 +163,11 @@ const DijkstraVisualizer = () => {
         handleStart={handleStart}
         sourceNode={sourceNode}
         setSourceNode={setSourceNode}
+        setPositions={setPositions}
       />
-      <canvas
+      <canvas id="canv"
         ref={canvasRef}
-        width={400}
+        width={600}
         height={400}
         style={{ border: "1px solid black" }}
       ></canvas>

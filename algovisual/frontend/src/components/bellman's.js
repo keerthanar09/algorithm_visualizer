@@ -1,138 +1,189 @@
-/* global p5 */
-
-import React, { useRef, useEffect, useState } from "react";
-import p5 from "p5";
+import React, { useState, useRef, useEffect } from "react";
 import SettingsPF from "./UI/settingsPF";
+import "./UI/styles/align.css";
 
 const BellmanVisualization = () => {
+  const canvasRef = useRef(null);
   const [sourceNode, setSourceNode] = useState(0);
   const [nodeCount, setNodeCount] = useState(6);
   const [maxWeight, setMaxWeight] = useState(10);
+  const [result, setResult] = useState("");
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
-  const sketchRef = useRef();
-  const p5InstanceRef = useRef(null);
+  const [positions, setPositions] = useState({});
+  const [shortestPaths, setShortestPaths] = useState([]);
 
-  // Bellman-Ford visualization
-  const visualizeBellmanFord = async (p, sourceNode) => {
-    const distances = Array(nodes.length).fill(Infinity);
-    distances[sourceNode] = 0;
+  useEffect(() => {
+    if (nodes.length > 0 && edges.length > 0) {
+      drawGraph();
+    }
+  }, [nodes, edges, positions]);
 
-    for (let i = 0; i < nodes.length - 1; i++) {
-      for (const edge of edges) {
-        const { from, to, weight } = edge;
+  const generateGraph = () => {
+    const newNodes = Array.from({ length: nodeCount }, (_, index) => ({
+      id: index,
+      dist: Infinity,
+    }));
 
-        if (distances[from] + weight < distances[to]) {
-          distances[to] = distances[from] + weight;
+    const newEdges = [];
+    const newPositions = {};
+    const canvas = canvasRef.current;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 150;
 
-          // Highlight the edge
-          p.highlightEdge(edge, "blue");
-          await p.sleep(1000);
-          p.drawGraph();
+    newNodes.forEach((_, index) => {
+      const angle = (2 * Math.PI * index) / nodeCount;
+      newPositions[index] = {
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle),
+      };
+    });
+
+    for (let i = 0; i < nodeCount; i++) {
+      for (let j = i + 1; j < nodeCount; j++) {
+        if (Math.random() < 0.6) {
+          const weight = Math.floor(Math.random() * maxWeight) + 1;
+          newEdges.push({ from: i, to: j, weight });
+          newEdges.push({ from: j, to: i, weight });
         }
       }
     }
 
-    let hasNegativeCycle = false;
+    setNodes(newNodes);
+    setEdges(newEdges);
+    setPositions(newPositions);
+    setShortestPaths([]);
+    setResult("");
+  };
+
+  const drawGraph = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    edges.forEach((edge) => {
+      const fromNode = positions[edge.from];
+      const toNode = positions[edge.to];
+
+      if (fromNode && toNode) {
+        ctx.beginPath();
+        ctx.moveTo(fromNode.x, fromNode.y);
+        ctx.lineTo(toNode.x, toNode.y);
+        ctx.strokeStyle = "gray";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        const midX = (fromNode.x + toNode.x) / 2;
+        const midY = (fromNode.y + toNode.y) / 2;
+        ctx.fillStyle = "black";
+        ctx.fillText(edge.weight, midX, midY);
+      }
+    });
+
+    Object.entries(positions).forEach(([nodeId, { x, y }]) => {
+      ctx.beginPath();
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.fillStyle = "white";
+      ctx.fill();
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+      ctx.fillStyle = "black";
+      ctx.fillText(nodeId, x - 5, y + 5);
+    });
+  };
+
+  const runBellmanFord = async () => {
+    if (isNaN(sourceNode) || sourceNode < 0 || sourceNode >= nodes.length) {
+      alert("Please enter a valid starting node!");
+      return;
+    }
+
+    const newNodes = nodes.map((node) => ({ ...node, dist: Infinity }));
+    newNodes[sourceNode].dist = 0;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    for (let i = 0; i < nodes.length - 1; i++) {
+      let updated = false;
+
+      for (const edge of edges) {
+        const fromNode = newNodes[edge.from];
+        const toNode = newNodes[edge.to];
+
+        if (fromNode.dist !== Infinity && fromNode.dist + edge.weight < toNode.dist) {
+          toNode.dist = fromNode.dist + edge.weight;
+          updated = true;
+          await highlightEdge(edge.from, edge.to, "green", ctx);
+        }
+      }
+
+      if (!updated) break;
+    }
+
     for (const edge of edges) {
-      const { from, to, weight } = edge;
-      if (distances[from] + weight < distances[to]) {
-        hasNegativeCycle = true;
-        break;
+      const fromNode = newNodes[edge.from];
+      const toNode = newNodes[edge.to];
+      if (fromNode.dist + edge.weight < toNode.dist) {
+        alert("Graph contains a negative weight cycle!");
+        return;
       }
     }
 
-    if (hasNegativeCycle) {
-      alert("Graph contains a negative weight cycle!");
-    } else {
-      const message = distances
-        .map((distance, index) => `Vertex ${index}: Distance = ${distance}`)
-        .join("\n");
-      alert(`Algorithm completed. Shortest distances:\n${message}`);
-    }
+    setNodes(newNodes);
+    displayShortestPaths(sourceNode, newNodes);
   };
 
-  // p5 sketch
-  const Sketch = (p) => {
-    p.setup = () => {
-      p.createCanvas(400, 400);
-      p.frameRate(30);
-      p.drawGraph();
-    };
+  const highlightEdge = async (from, to, color, ctx) => {
+    const fromNode = positions[from];
+    const toNode = positions[to];
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(fromNode.x, fromNode.y);
+    ctx.lineTo(toNode.x, toNode.y);
+    ctx.stroke();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    drawGraph();
+  };
 
-    p.drawGraph = () => {
-      p.background(255);
-      edges.forEach((edge) => {
-        const fromVertex = nodes[edge.from];
-        const toVertex = nodes[edge.to];
-
-        p.stroke(0);
-        p.line(fromVertex.x, fromVertex.y, toVertex.x, toVertex.y);
-
-        // Draw edge weight
-        const midX = (fromVertex.x + toVertex.x) / 2;
-        const midY = (fromVertex.y + toVertex.y) / 2;
-        p.fill(255, 0, 0);
-        p.text(edge.weight, midX, midY);
-      });
-
-      nodes.forEach((vertex) => {
-        p.fill(173, 216, 230);
-        p.ellipse(vertex.x, vertex.y, 40, 40);
-        p.fill(0);
-        p.text(vertex.id, vertex.x - 5, vertex.y + 5);
-      });
-    };
-
-    p.highlightEdge = (edge, color) => {
-      const fromVertex = nodes[edge.from];
-      const toVertex = nodes[edge.to];
-
-      p.stroke(color);
-      p.strokeWeight(3);
-      p.line(fromVertex.x, fromVertex.y, toVertex.x, toVertex.y);
-    };
-
-    p.sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const displayShortestPaths = (startNode, graph) => {
+    const paths = graph.map((node, index) => ({
+      from: startNode,
+      to: index,
+      dist: node.dist,
+    }));
+    setShortestPaths(paths); // Ensure it's always an array
+    setResult(
+      paths
+        .map((path) => `Node ${path.from} → Node ${path.to}: ${path.dist}`)
+        .join("\n")
+    );
   };
 
   useEffect(() => {
-    if (!p5InstanceRef.current) {
-      p5InstanceRef.current = new p5(Sketch, sketchRef.current);
-    }
-
-    return () => {
-      p5InstanceRef.current.remove();
-      p5InstanceRef.current = null;
-    };
-  }, [nodes, edges]);
-
-  const handleStart = () => {
-    if (nodes.length === 0) {
-      alert("Please generate a graph using the settings panel.");
-      return;
-    }
-    if (isNaN(sourceNode) || sourceNode < 0 || sourceNode >= nodes.length) {
-      alert("Please enter a valid source node.");
-      return;
-    }
-    visualizeBellmanFord(p5InstanceRef.current, sourceNode);
-  };
+    generateGraph();
+  }, [nodeCount, maxWeight]);
 
   return (
-    <div class="container">
+    <div className="mc">
       <SettingsPF
         nodeCount={nodeCount}
         setNodeCount={setNodeCount}
         maxWeight={maxWeight}
         setMaxWeight={setMaxWeight}
-        setNodes={setNodes}
-        setEdges={setEdges}
-        handleStart={handleStart}
+        handleStart={runBellmanFord}
         sourceNode={sourceNode}
         setSourceNode={setSourceNode}
       />
-      <div ref={sketchRef}></div>
+      <canvas id="canv"
+        ref={canvasRef}
+        width={400}
+        height={400}
+        style={{ border: "1px solid black" }}
+      ></canvas>
+      <pre>{result}</pre>
     </div>
   );
 };

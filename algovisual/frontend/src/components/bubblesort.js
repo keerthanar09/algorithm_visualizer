@@ -8,7 +8,7 @@ import Settings from "./UI/settings";
 const BubbleSortVisualization = () => {
   const [values, setValues] = useState([]); 
   const [numElements, setNumElements] = useState(10); 
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const sketchRef = useRef();
   const p5InstanceRef = useRef(null);
  
@@ -43,7 +43,7 @@ const BubbleSortVisualization = () => {
       p.setup = () => {
         p.createCanvas(400, 400);
         p.frameRate(1);
-        
+        p.noLoop();
       };
 
       p.draw = () => {

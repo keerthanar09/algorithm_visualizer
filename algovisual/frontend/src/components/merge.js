@@ -8,7 +8,7 @@ import Settings from "./UI/settings";
 const MergeSortVisualization = () => {
   const [values, setValues] = useState([]); 
   const [numElements, setNumElements] = useState(10); 
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const sketchRef = useRef();
   const p5InstanceRef = useRef(null);
 
@@ -46,6 +46,7 @@ const MergeSortVisualization = () => {
         states = new Array(value.length).fill(-1);
         
         p.mergeSort(value, 0, value.length - 1);
+        p.noLoop();
       };
 
     p.draw = () => {
