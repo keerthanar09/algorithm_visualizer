@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import './UI/styles/bfs.css'; 
+import React, { useEffect, useRef } from "react";
+import "./UI/styles/bfs.css";
 
 const BFSVisualization = () => {
   const canvasRef = useRef(null);
@@ -10,73 +10,64 @@ const BFSVisualization = () => {
     const ctx = canvas.getContext("2d");
     canvas.width = 600;
     canvas.height = 400;
- 
+
     const generateRandomGraph = () => {
-      const vertices = ["A", "B", "C", "D", "E", "F"].slice(
-        0,
-        Math.floor(Math.random() * 2) + 5
-      );
+      const nodes = [];
+      const numNodes = Math.floor(Math.random() * 3) + 5; // Random number of nodes between 5 and 7
+      for (let i = 0; i < numNodes; i++) {
+        nodes.push(String.fromCharCode(65 + i)); // A, B, C...
+      }
+
       const graph = {};
-
-      vertices.forEach((vertex) => {
-        graph[vertex] = [];
-      });
-
-      vertices.forEach((vertex) => {
-        const numEdges = Math.floor(Math.random() * (vertices.length - 1)) + 1;
-        const neighbors = new Set();
-
-        while (neighbors.size < numEdges) {
-          const neighbor = vertices[Math.floor(Math.random() * vertices.length)];
-          if (neighbor !== vertex) neighbors.add(neighbor);
-        }
-
-        graph[vertex] = Array.from(neighbors);
+      nodes.forEach((node) => {
+        const edges = nodes.filter(
+          (target) => target !== node && Math.random() > 0.3
+        );
+        graph[node] = edges;
       });
 
       return graph;
     };
 
-    const generateNodePositions = (vertices) => {
+    const generateRandomPositions = (nodes) => {
       const positions = {};
-      vertices.forEach((vertex, index) => {
-        const angle = (2 * Math.PI * index) / vertices.length;
-        const x = 300 + 200 * Math.cos(angle);
-        const y = 200 + 150 * Math.sin(angle);
-        positions[vertex] = { x, y };
+      nodes.forEach((node) => {
+        positions[node] = {
+          x: Math.random() * 400 + 50,
+          y: Math.random() * 200 + 50,
+        };
       });
       return positions;
     };
 
-    const drawGraph = (ctx, graph, nodePositions) => {
+    const drawGraph = (graph, positions, highlightNode = null) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (const [node, neighbors] of Object.entries(graph)) {
-        const { x: x1, y: y1 } = nodePositions[node];
-        neighbors.forEach((neighbor) => {
-          const { x: x2, y: y2 } = nodePositions[neighbor];
+
+      // Draw edges
+      Object.keys(graph).forEach((node) => {
+        graph[node].forEach((neighbor) => {
           ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.strokeStyle = "#aaa";
-          ctx.lineWidth = 2;
+          ctx.moveTo(positions[node].x, positions[node].y);
+          ctx.lineTo(positions[neighbor].x, positions[neighbor].y);
+          ctx.strokeStyle = "#ccc";
           ctx.stroke();
         });
-      }
+      });
 
-      for (const [node, { x, y }] of Object.entries(nodePositions)) {
+      // Draw nodes
+      Object.keys(positions).forEach((node) => {
+        const { x, y } = positions[node];
         ctx.beginPath();
-        ctx.arc(x, y, 20, 0, Math.PI * 2);
-        ctx.fillStyle = "#007bff";
+        ctx.arc(x, y, 15, 0, 2 * Math.PI);
+        ctx.fillStyle = highlightNode === node ? "orange" : "lightblue";
         ctx.fill();
-        ctx.strokeStyle = "#fff";
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = "black";
         ctx.stroke();
-        ctx.fillStyle = "#fff";
-        ctx.font = "14px Arial";
+        ctx.fillStyle = "black";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(node, x, y);
-      }
+      });
     };
 
     const updateQueueDisplay = (queue, final = false) => {
@@ -109,7 +100,14 @@ const BFSVisualization = () => {
 
         if (!visited.has(current)) {
           visited.add(current);
-          const { x, y } = nodePositions[current];
+          const position = nodePositions[current];
+          if (!position) {
+            console.error(`Position for node "${current}" not found.`);
+            continue;
+          }
+
+          const { x, y } = position;
+
           ctx.beginPath();
           ctx.arc(x, y, 20, 0, Math.PI * 2);
           ctx.fillStyle = "#ff5722";
@@ -124,7 +122,7 @@ const BFSVisualization = () => {
           ctx.fillText(current, x, y);
 
           await new Promise((resolve) => setTimeout(resolve, 1500));
-          graph[current].forEach((neighbor) => {
+          graph[current]?.forEach((neighbor) => {
             if (!visited.has(neighbor)) {
               queue.push(neighbor);
             }
@@ -135,19 +133,20 @@ const BFSVisualization = () => {
       updateQueueDisplay(queue, true);
     };
 
-    const graph = generateRandomGraph();
-    const nodePositions = generateNodePositions(Object.keys(graph));
+    const randomGraph = generateRandomGraph();
+    const nodePositions = generateRandomPositions(Object.keys(randomGraph));
 
-    drawGraph(ctx, graph, nodePositions);
+    drawGraph(randomGraph, nodePositions);
 
     const startButton = document.getElementById("startButton");
-    startButton.addEventListener("click", () => {
-      drawGraph(ctx, graph, nodePositions);
-      bestFirstSearch(Object.keys(graph)[0], graph, nodePositions);
-    });
+    const handleStart = () => {
+      drawGraph(randomGraph, nodePositions);
+      bestFirstSearch(Object.keys(randomGraph)[0], randomGraph, nodePositions);
+    };
+    startButton.addEventListener("click", handleStart);
 
     return () => {
-      startButton.removeEventListener("click", () => {});
+      startButton.removeEventListener("click", handleStart);
     };
   }, []);
 
