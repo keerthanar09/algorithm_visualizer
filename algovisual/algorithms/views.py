@@ -85,3 +85,39 @@ def search_algorithms(request):
             results = Algorithms1.objects.filter( Q(name__icontains=query) | Q(catID__name__icontains=query)).values("slno", "name", "path", "catID__name")
             return JsonResponse(list(results), safe=False)
         return JsonResponse([], safe=False)
+    
+
+def bubbleSort(arr):
+    n=len(arr)
+    for i in range(n):
+        swapped = False
+        for j in range(0, n-i-1):
+            if arr[j]>arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+                swapped = True
+        if (swapped == False):
+            break
+
+
+@api_view(['GET'])
+def get_search_data(request, format=None):
+    try:
+        
+        num_elements = int(request.query_params.get('num_elements', 10))
+        #Keeping the number of inputes within the range of 2 to 50 only as its reasonable.
+        if num_elements < 5 or num_elements > 50:
+            return Response(
+                {"error": "num_elements must be between 2 and 50"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        
+        data = [random.randint(10, 300) for _ in range(num_elements)]
+        bubbleSort(data)
+
+        return Response(data, status=status.HTTP_200_OK)
+    except ValueError:
+        return Response(
+            {"error": "Invalid 'num_elements' parameter. Must be an integer."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )

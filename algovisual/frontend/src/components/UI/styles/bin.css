@@ -24,8 +24,17 @@
     background-color: lightcoral;
 }
 
-#message {
+.array-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; 
+    align-items: center; 
+    flex-wrap: wrap; 
+}
+
+.message {
     margin-top: 20px;
     font-size: 18px;
     font-weight: bold;
+    text-align: center;
 }
